@@ -2,755 +2,715 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>CT認定AP - 学習アプリ</title>
-<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0B0F14">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CT認定AP">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CT認定試験対策 — Gantry</title>
+<meta name="description" content="CT認定技師試験対策アプリ。装置構成、画像再構成、画質評価、被ばく管理の4分野・250問を収録。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0B0F14;
-    --panel:#121820;
-    --panel2:#1A222C;
-    --line:#26313D;
-    --text:#E7EDF3;
-    --sub:#8CA0B3;
-    --cyan:#46D9CE;
-    --amber:#F2A65A;
-    --red:#E8637A;
-    --green:#5FCB8B;
-    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-    --sans: 'IBM Plex Sans JP', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:
-      radial-gradient(circle at 85% -10%, rgba(70,217,206,0.10), transparent 45%),
-      radial-gradient(circle at -10% 110%, rgba(242,166,90,0.08), transparent 45%),
-      var(--bg);
-    color:var(--text);
-    font-family:var(--sans);
-    min-height:100vh;
-    padding-bottom:70px;
-  }
-  a{color:inherit;}
+:root{
+  --bg:#080B10;
+  --bg-2:#0D131A;
+  --panel:#111922;
+  --panel-2:#151F29;
+  --line:#22303C;
+  --line-soft:#1A2530;
+  --text:#EAF1F5;
+  --text-dim:#8C9AA8;
+  --text-faint:#576270;
+  --accent:#3EE0D0;
+  --accent-strong:#7BF3E6;
+  --accent-dim:rgba(62,224,208,.12);
+  --amber:#F2A65A;
+  --amber-dim:rgba(242,166,90,.13);
+  --good:#5FCB93;
+  --good-dim:rgba(95,203,147,.13);
+  --bad:#EA6B85;
+  --bad-dim:rgba(234,107,133,.13);
+  --radius-lg:20px;
+  --radius-md:14px;
+  --radius-sm:9px;
+  --font-display:'Zen Kaku Gothic New',sans-serif;
+  --font-body:'Noto Sans JP',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --shadow-lift:0 20px 60px -20px rgba(0,0,0,.6);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-tap-highlight-color:transparent;}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 700px at 82% -10%, rgba(62,224,208,.07), transparent 60%),
+    radial-gradient(900px 600px at -10% 110%, rgba(242,166,90,.05), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  line-height:1.6;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+}
+h1,h2,h3,.font-display{font-family:var(--font-display);}
+.mono{font-family:var(--font-mono);}
+button{font-family:inherit;}
+a{color:inherit;}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
 
-  /* ---- Gantry ring header ---- */
-  header{
-    padding:22px 18px 14px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    border-bottom:1px solid var(--line);
-    position:sticky;
-    top:0;
-    background:rgba(11,15,20,0.92);
-    backdrop-filter:blur(6px);
-    z-index:20;
-  }
-  .gantry{
-    width:40px;height:40px;flex:none;position:relative;
-  }
-  .gantry svg{width:100%;height:100%;animation:spin 8s linear infinite;}
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-  header h1{
-    font-size:16px;
-    margin:0;
-    letter-spacing:0.02em;
-    font-weight:700;
-  }
-  header .tagline{
-    font-family:var(--mono);
-    font-size:10.5px;
-    color:var(--sub);
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    margin-top:2px;
-  }
+#app{max-width:920px; margin:0 auto; padding:28px 20px 80px;}
+@media (min-width:720px){ #app{padding:48px 32px 100px;} }
 
-  main{max-width:640px;margin:0 auto;padding:18px 16px 40px;}
+/* ---------- Top bar ---------- */
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:28px;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:900; letter-spacing:.02em;}
+.brand .mark{
+  width:34px;height:34px;border-radius:50%;
+  border:2px solid var(--accent);
+  position:relative; flex:none;
+}
+.brand .mark::after{
+  content:"";position:absolute; inset:9px; border-radius:50%; background:var(--accent);
+  box-shadow:0 0 14px 2px var(--accent-dim);
+}
+.brand .name{font-size:1.05rem;}
+.brand .name small{display:block; font-family:var(--font-body); font-weight:500; font-size:.62rem; color:var(--text-dim); letter-spacing:.14em; text-transform:uppercase;}
 
-  /* ---- Tab bar (bottom nav, thumb-reachable) ---- */
-  nav.tabbar{
-    position:fixed;bottom:0;left:0;right:0;
-    display:flex;
-    background:var(--panel);
-    border-top:1px solid var(--line);
-    z-index:30;
-  }
-  nav.tabbar button{
-    flex:1;
-    background:none;border:none;color:var(--sub);
-    font-family:var(--sans);
-    font-size:12px;
-    padding:11px 4px 9px;
-    display:flex;flex-direction:column;align-items:center;gap:3px;
-    cursor:pointer;
-  }
-  nav.tabbar button .dot{width:5px;height:5px;border-radius:50%;background:transparent;}
-  nav.tabbar button.active{color:var(--cyan);}
-  nav.tabbar button.active .dot{background:var(--cyan);}
+.icon-btn{
+  background:none;border:1px solid var(--line); color:var(--text-dim);
+  border-radius:999px; padding:8px 16px; font-size:.82rem; cursor:pointer;
+  display:inline-flex; align-items:center; gap:6px; transition:.15s border-color, .15s color;
+}
+.icon-btn:hover{border-color:var(--accent); color:var(--text);}
 
-  h2.section-title{
-    font-size:13px;
-    text-transform:uppercase;
-    letter-spacing:0.08em;
-    color:var(--cyan);
-    font-family:var(--mono);
-    margin:0 0 12px;
-    display:flex;align-items:center;gap:8px;
-  }
-  h2.section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+/* ---------- Hero ---------- */
+.hero{position:relative; padding:30px 4px 10px; display:grid; gap:26px;}
+@media (min-width:760px){ .hero{grid-template-columns:1.15fr .85fr; align-items:center; padding:40px 4px 20px;} }
+.hero .eyebrow{
+  font-family:var(--font-mono); font-size:.74rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 14px; display:flex; align-items:center; gap:9px;
+}
+.hero .eyebrow::before{content:""; width:7px;height:7px;border-radius:50%; background:var(--accent); box-shadow:0 0 8px 2px var(--accent-dim); flex:none;}
+.hero p.lead{
+  color:var(--text); font-family:var(--font-display); font-weight:700;
+  font-size:clamp(1.3rem, 3vw, 1.7rem); line-height:1.55; max-width:30ch; margin:0 0 26px; letter-spacing:-.005em;
+}
+.hero-stats{display:flex; gap:26px; flex-wrap:wrap;}
+.hero-stats div{display:flex; flex-direction:column; gap:2px;}
+.hero-stats .num{font-family:var(--font-mono); font-size:1.5rem; font-weight:600; color:var(--accent-strong);}
+.hero-stats .lbl{font-size:.7rem; color:var(--text-faint); letter-spacing:.08em; text-transform:uppercase;}
 
-  .card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:16px;
-    margin-bottom:14px;
-  }
+.sinogram-wrap{display:flex; align-items:center; justify-content:center;}
+.sinogram{width:min(280px,72vw); height:min(280px,72vw); animation:spin 90s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-  /* ---- Setup screen ---- */
-  .mode-switch{display:flex;gap:8px;margin-bottom:18px;}
-  .mode-btn{
-    flex:1;padding:14px 10px;border-radius:10px;border:1px solid var(--line);
-    background:var(--panel);color:var(--sub);cursor:pointer;text-align:left;
-  }
-  .mode-btn strong{display:block;color:var(--text);font-size:14px;margin-bottom:3px;}
-  .mode-btn span{font-size:11.5px;font-family:var(--mono);}
-  .mode-btn.selected{border-color:var(--cyan);background:rgba(70,217,206,0.08);}
-  .mode-btn.selected strong{color:var(--cyan);}
+/* ---------- Category grid ---------- */
+.section-label{
+  font-family:var(--font-mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-faint); margin:44px 0 14px; display:flex; align-items:center; gap:10px;
+}
+.section-label::after{content:""; height:1px; flex:1; background:var(--line);}
 
-  label.field-label{
-    display:block;font-size:11.5px;color:var(--sub);
-    text-transform:uppercase;letter-spacing:0.06em;font-family:var(--mono);
-    margin:14px 0 6px;
-  }
-  select, .chip-group{width:100%;}
-  select{
-    width:100%;padding:10px 12px;border-radius:8px;
-    background:var(--panel2);border:1px solid var(--line);color:var(--text);
-    font-family:var(--sans);font-size:14px;
-  }
-  .chip-group{display:flex;flex-wrap:wrap;gap:7px;}
-  .chip{
-    padding:7px 12px;border-radius:20px;border:1px solid var(--line);
-    background:var(--panel2);color:var(--sub);font-size:12.5px;cursor:pointer;
-    font-family:var(--mono);
-  }
-  .chip.selected{border-color:var(--amber);color:var(--amber);background:rgba(242,166,90,0.10);}
+.cat-grid{display:grid; grid-template-columns:1fr; gap:10px;}
+@media (min-width:640px){ .cat-grid{grid-template-columns:1fr 1fr;} }
+.cat-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md);
+  padding:16px 18px; cursor:pointer; text-align:left; display:flex; gap:14px; align-items:flex-start;
+  transition:.15s border-color, .15s background, .15s transform;
+}
+.cat-card:hover{border-color:var(--line-soft); transform:translateY(-1px);}
+.cat-card.active{border-color:var(--accent); background:linear-gradient(180deg, var(--accent-dim), transparent 60%), var(--panel);}
+.cat-card .icon{
+  flex:none; width:38px;height:38px; border-radius:10px; display:grid; place-items:center;
+  background:var(--panel-2); border:1px solid var(--line); color:var(--text-dim);
+}
+.cat-card.active .icon{color:var(--accent); border-color:var(--accent);}
+.cat-card .cat-title{font-weight:700; font-size:.92rem; margin-bottom:3px;}
+.cat-card .cat-meta{font-size:.75rem; color:var(--text-faint); font-family:var(--font-mono);}
+.cat-card .check{margin-left:auto; width:18px;height:18px; border-radius:50%; border:1.5px solid var(--line); flex:none; margin-top:2px;}
+.cat-card.active .check{border-color:var(--accent); background:var(--accent); box-shadow:0 0 0 3px var(--accent-dim);}
 
-  .count-line{
-    margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--sub);
-  }
-  .count-line b{color:var(--text);font-size:15px;}
+/* ---------- Setup controls ---------- */
+.setup-row{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md);
+  padding:18px 20px; display:grid; gap:18px; margin-top:10px;
+}
+@media (min-width:640px){ .setup-row{grid-template-columns:1fr 1fr;} }
+.field label{display:block; font-size:.72rem; color:var(--text-faint); letter-spacing:.08em; text-transform:uppercase; margin-bottom:9px; font-family:var(--font-mono);}
+.seg{display:flex; border:1px solid var(--line); border-radius:999px; padding:3px; gap:2px;}
+.seg button{
+  flex:1; background:none; border:none; color:var(--text-dim); padding:8px 6px; border-radius:999px;
+  font-size:.82rem; cursor:pointer; transition:.15s;
+}
+.seg button.active{background:var(--accent); color:#04211D; font-weight:700;}
+.toggle-row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.toggle-row .t-label{font-size:.88rem;}
+.toggle-row .t-sub{font-size:.74rem; color:var(--text-faint); margin-top:2px;}
+.switch{width:44px;height:26px;border-radius:999px;background:var(--panel-2); border:1px solid var(--line); position:relative; cursor:pointer; flex:none;}
+.switch::after{content:"";position:absolute; top:2px;left:2px; width:20px;height:20px;border-radius:50%; background:var(--text-dim); transition:.18s;}
+.switch.on{background:var(--accent-dim); border-color:var(--accent);}
+.switch.on::after{transform:translateX(18px); background:var(--accent);}
 
-  .start-btn{
-    width:100%;margin-top:16px;padding:15px;border:none;border-radius:10px;
-    background:linear-gradient(135deg, var(--cyan), #2FB8AC);
-    color:#08201D;font-weight:700;font-size:15px;cursor:pointer;
-    letter-spacing:0.02em;
-  }
-  .start-btn:disabled{opacity:0.35;cursor:not-allowed;}
+.start-bar{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:22px; flex-wrap:wrap;}
+.start-bar .avail{font-size:.8rem; color:var(--text-faint);}
+.btn-primary{
+  background:var(--accent); color:#04211D; border:none; font-weight:800; font-size:.95rem;
+  padding:14px 28px; border-radius:999px; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+  box-shadow:0 12px 28px -10px rgba(62,224,208,.45); transition:.15s transform;
+}
+.btn-primary:hover{transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.4; cursor:not-allowed; box-shadow:none;}
+.btn-ghost{
+  background:none; border:1px solid var(--line); color:var(--text-dim); padding:13px 22px; border-radius:999px;
+  cursor:pointer; font-size:.9rem; transition:.15s;
+}
+.btn-ghost:hover{border-color:var(--accent); color:var(--text);}
 
-  /* ---- Quiz screen ---- */
-  .quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-family:var(--mono);font-size:12px;color:var(--sub);}
-  .progress-track{height:4px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:18px;}
-  .progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--amber));transition:width .3s;}
+.weak-banner{
+  margin-top:14px; border:1px dashed var(--amber); background:var(--amber-dim); border-radius:var(--radius-md);
+  padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+.weak-banner .t{font-size:.85rem;}
+.weak-banner b{color:var(--amber);}
 
-  .q-meta{font-family:var(--mono);font-size:11px;color:var(--sub);margin-bottom:8px;letter-spacing:0.04em;}
-  .q-text{font-size:16px;line-height:1.65;margin-bottom:18px;}
+/* ---------- Quiz screen ---------- */
+.quiz-top{display:flex; align-items:center; gap:16px; margin-bottom:22px;}
+.ring-wrap{position:relative; width:52px;height:52px; flex:none;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-wrap .deg{
+  position:absolute; inset:0; display:grid; place-items:center; font-family:var(--font-mono);
+  font-size:.6rem; color:var(--accent);
+}
+.quiz-meta{flex:1; min-width:0;}
+.quiz-meta .cat{font-size:.7rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:.1em; font-family:var(--font-mono);}
+.quiz-meta .prog{font-size:.85rem; color:var(--text-dim); margin-top:2px;}
+.quiz-meta .prog b{color:var(--text);}
 
-  .choice{
-    display:flex;gap:10px;align-items:flex-start;
-    padding:13px 14px;margin-bottom:9px;border-radius:9px;
-    border:1px solid var(--line);background:var(--panel2);
-    cursor:pointer;font-size:14.5px;line-height:1.55;
-  }
-  .choice .letter{
-    font-family:var(--mono);color:var(--sub);flex:none;
-    width:20px;height:20px;border-radius:50%;border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;font-size:11px;
-  }
-  .choice:hover{border-color:#3A4856;}
-  .choice.correct{border-color:var(--green);background:rgba(95,203,139,0.10);}
-  .choice.correct .letter{background:var(--green);color:#0B0F14;border-color:var(--green);}
-  .choice.incorrect{border-color:var(--red);background:rgba(232,99,122,0.10);}
-  .choice.incorrect .letter{background:var(--red);color:#0B0F14;border-color:var(--red);}
-  .choice.disabled{cursor:default;}
-  .choice.dim{opacity:0.45;}
+.q-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:26px 22px; box-shadow:var(--shadow-lift);
+}
+@media (min-width:640px){ .q-card{padding:34px 34px;} }
+.q-id{font-family:var(--font-mono); font-size:.72rem; color:var(--text-faint); letter-spacing:.08em;}
+.q-sub{font-family:var(--font-mono); font-size:.72rem; color:var(--accent); margin-left:8px;}
+.q-text{font-size:1.12rem; font-weight:600; margin:12px 0 24px; line-height:1.65;}
 
-  .feedback{
-    margin-top:6px;padding:13px 14px;border-radius:9px;font-size:13.5px;line-height:1.65;
-    border:1px solid var(--line);background:var(--panel2);
-  }
-  .feedback.correct{border-color:var(--green);}
-  .feedback.incorrect{border-color:var(--red);}
-  .feedback .fb-head{font-family:var(--mono);font-weight:700;margin-bottom:5px;letter-spacing:0.04em;}
-  .feedback.correct .fb-head{color:var(--green);}
-  .feedback.incorrect .fb-head{color:var(--red);}
-  .feedback .fb-body{color:var(--sub);}
+.choices{display:grid; gap:10px;}
+.choice{
+  display:flex; align-items:flex-start; gap:13px; text-align:left; width:100%;
+  background:var(--panel-2); border:1px solid var(--line); border-radius:var(--radius-md);
+  padding:13px 16px; cursor:pointer; font-size:.94rem; color:var(--text); transition:.12s border-color,.12s background;
+}
+.choice:hover:not(:disabled){border-color:var(--text-faint);}
+.choice .badge{
+  flex:none; width:24px;height:24px;border-radius:7px; background:var(--bg-2); border:1px solid var(--line);
+  display:grid; place-items:center; font-family:var(--font-mono); font-size:.72rem; color:var(--text-dim); font-weight:600;
+}
+.choice:disabled{cursor:default;}
+.choice.correct{border-color:var(--good); background:var(--good-dim);}
+.choice.correct .badge{background:var(--good); color:#06251A; border-color:var(--good);}
+.choice.wrong{border-color:var(--bad); background:var(--bad-dim);}
+.choice.wrong .badge{background:var(--bad); color:#2A0710; border-color:var(--bad);}
+.choice.dim{opacity:.45;}
 
-  .nav-row{display:flex;gap:10px;margin-top:16px;}
-  .btn{
-    flex:1;padding:13px;border-radius:9px;border:1px solid var(--line);
-    background:var(--panel2);color:var(--text);font-size:14px;cursor:pointer;font-weight:600;
-  }
-  .btn.primary{background:var(--cyan);color:#08201D;border:none;}
-  .btn:disabled{opacity:0.35;cursor:not-allowed;}
+.explain{
+  margin-top:20px; border-top:1px solid var(--line); padding-top:18px;
+  animation:reveal .25s ease;
+}
+@keyframes reveal{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:none;}}
+.explain .result-tag{
+  display:inline-flex; align-items:center; gap:7px; font-weight:800; font-size:.85rem; margin-bottom:10px;
+  padding:4px 12px; border-radius:999px;
+}
+.explain .result-tag.ok{color:var(--good); background:var(--good-dim);}
+.explain .result-tag.ng{color:var(--bad); background:var(--bad-dim);}
+.explain p{margin:0 0 12px; color:var(--text-dim); font-size:.92rem;}
+.tags{display:flex; gap:6px; flex-wrap:wrap;}
+.tag{font-family:var(--font-mono); font-size:.68rem; color:var(--text-faint); border:1px solid var(--line); border-radius:999px; padding:3px 10px;}
 
-  /* ---- Result screen ---- */
-  .score-ring-wrap{display:flex;justify-content:center;margin:10px 0 20px;}
-  .score-num{font-family:var(--mono);font-size:34px;text-align:center;}
-  .score-label{text-align:center;color:var(--sub);font-size:12px;font-family:var(--mono);margin-top:2px;letter-spacing:0.06em;}
+.q-actions{display:flex; justify-content:space-between; align-items:center; margin-top:24px; gap:10px;}
+.link-quiet{background:none;border:none;color:var(--text-faint); font-size:.82rem; cursor:pointer; text-decoration:underline; text-underline-offset:3px;}
+.link-quiet:hover{color:var(--text-dim);}
+.kbd-hint{font-family:var(--font-mono); font-size:.68rem; color:var(--text-faint); text-align:center; margin-top:16px;}
+.kbd-hint kbd{border:1px solid var(--line); border-radius:4px; padding:1px 5px; margin:0 2px;}
 
-  .review-item{border-bottom:1px solid var(--line);padding:12px 0;}
-  .review-item:last-child{border-bottom:none;}
-  .review-item .rq{font-size:13.5px;margin-bottom:6px;}
-  .review-item .rtag{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:10px;margin-right:6px;}
-  .rtag.ok{color:var(--green);border:1px solid var(--green);}
-  .rtag.ng{color:var(--red);border:1px solid var(--red);}
+/* ---------- Results ---------- */
+.result-hero{display:grid; gap:26px; place-items:center; text-align:center; padding:30px 0 10px;}
+@media (min-width:640px){ .result-hero{grid-template-columns:auto 1fr; text-align:left; place-items:center start;} }
+.score-ring{position:relative; width:168px;height:168px;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-ring .center{position:absolute; inset:0; display:grid; place-items:center; flex-direction:column;}
+.score-ring .pct{font-family:var(--font-mono); font-size:2.1rem; font-weight:700;}
+.score-ring .of{font-size:.7rem; color:var(--text-faint); margin-top:2px;}
+.result-copy h2{font-size:1.6rem; margin:0 0 8px;}
+.result-copy p{color:var(--text-dim); margin:0; max-width:44ch;}
 
-  /* ---- Progress tab ---- */
-  .stat-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);}
-  .stat-row:last-child{border-bottom:none;}
-  .stat-name{font-size:13.5px;}
-  .stat-sub{font-size:11px;color:var(--sub);font-family:var(--mono);}
-  .bar-track{width:90px;height:6px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-left:10px;}
-  .bar-fill{height:100%;background:var(--cyan);}
-  .stat-num{font-family:var(--mono);font-size:12px;color:var(--sub);width:44px;text-align:right;}
+.bar-list{display:grid; gap:12px; margin-top:8px;}
+.bar-row .top{display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:6px;}
+.bar-row .top .name{color:var(--text-dim);}
+.bar-row .top .frac{font-family:var(--font-mono); color:var(--text-faint);}
+.bar-track{height:8px; border-radius:99px; background:var(--panel-2); border:1px solid var(--line); overflow:hidden;}
+.bar-fill{height:100%; background:linear-gradient(90deg, var(--accent), var(--accent-strong)); border-radius:99px;}
 
-  .master-badges{display:flex;gap:16px;margin-bottom:6px;}
-  .badge{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px;text-align:center;}
-  .badge .n{font-family:var(--mono);font-size:20px;}
-  .badge .l{font-size:10.5px;color:var(--sub);margin-top:2px;}
-  .badge.master .n{color:var(--green);}
-  .badge.learning .n{color:var(--amber);}
-  .badge.weak .n{color:var(--red);}
-  .badge.new .n{color:var(--sub);}
+.review-list{display:grid; gap:10px; margin-top:8px;}
+.review-item{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md); padding:16px 18px;
+}
+.review-item .rq{font-size:.9rem; font-weight:600; margin:6px 0 10px;}
+.review-item .ra{font-size:.82rem; color:var(--text-dim); display:grid; gap:4px;}
+.review-item .ra .you{color:var(--bad);}
+.review-item .ra .right{color:var(--good);}
+.review-item .rexp{font-size:.82rem; color:var(--text-faint); margin-top:8px; border-top:1px solid var(--line-soft); padding-top:8px;}
+.empty-note{color:var(--text-faint); font-size:.88rem; text-align:center; padding:20px;}
 
-  .reset-link{
-    display:block;text-align:center;margin-top:20px;font-family:var(--mono);
-    font-size:11.5px;color:var(--sub);text-decoration:underline;cursor:pointer;background:none;border:none;width:100%;
-  }
+.result-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:30px;}
 
-  .empty-note{color:var(--sub);font-size:13px;text-align:center;padding:30px 10px;}
+footer.app-footer{margin-top:60px; text-align:center; color:var(--text-faint); font-size:.72rem; font-family:var(--font-mono);}
+
+.visually-hidden{position:absolute; width:1px;height:1px; overflow:hidden; clip:rect(0 0 0 0);}
 </style>
 </head>
 <body>
+<div id="app"></div>
 
-<header>
-  <div class="gantry">
-    <svg viewBox="0 0 40 40">
-      <circle cx="20" cy="20" r="14.5" fill="none" stroke="#1D2833" stroke-width="3.4"/>
-      <circle cx="20" cy="20" r="14.5" fill="none" stroke="#46D9CE" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="68 23" transform="rotate(-90 20 20)"/>
-      <circle cx="20" cy="20" r="14.5" fill="none" stroke="#F2A65A" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="10 81" stroke-dashoffset="-68" transform="rotate(-90 20 20)"/>
-      <g stroke="#BFF3EC" stroke-width="1.6" stroke-linecap="round">
-        <line x1="20" y1="8.5" x2="20" y2="12.5"/>
-        <line x1="20" y1="27.5" x2="20" y2="31.5"/>
-        <line x1="8.5" y1="20" x2="12.5" y2="20"/>
-        <line x1="27.5" y1="20" x2="31.5" y2="20"/>
-      </g>
-      <circle cx="20" cy="20" r="2.4" fill="#F2A65A"/>
-    </svg>
-  </div>
-  <div>
-    <h1>CT認定AP</h1>
-    <div class="tagline">診療放射線技師 CT認定試験対策</div>
-  </div>
-</header>
-
-<main id="main"></main>
-
-<nav class="tabbar">
-  <button data-tab="practice" class="active"><span class="dot"></span>演習モード</button>
-  <button data-tab="exam"><span class="dot"></span>模擬試験</button>
-  <button data-tab="progress"><span class="dot"></span>進捗</button>
-</nav>
-
+<script id="quiz-data" type="application/json">[{"id":"CB-01","category":"CT装置の構成と基礎","subcategory":"CTシステム基本構成","question":"X線CTシステムの基本構成として適切なのはどれか。","choices":{"a":"X線管、現像装置、フィルム搬送部、読影灯","b":"磁石、傾斜磁場コイル、RFコイル、寝台","c":"ガントリー、寝台、操作卓、画像処理系","d":"探触子、送受信回路、走査変換器、表示部"},"answer":"c","explanation":"CT装置は、X線を放射するガントリー、患者を載せる寝台、それらを制御する操作卓、画像化を行う画像処理系で構成される。","tags":"ガントリー;寝台;操作卓"},{"id":"CB-02","category":"CT装置の構成と基礎","subcategory":"ガントリー構造","question":"一般的なCTガントリー内におけるX線管と検出器の配置はどれか。","choices":{"a":"X線管と検出器を対向配置して回転させる","b":"X線管と検出器を固定して寝台だけを回転させる","c":"X線管を固定して検出器と寝台を回転させる","d":"検出器を固定してX線管と寝台を回転させる"},"answer":"a","explanation":"一般的なCT装置は、X線管と検出器を対向させて配置し、ガントリー内で回転させることで投影データを収集する。","tags":"X線管;検出器;回転"},{"id":"CB-03","category":"CT装置の構成と基礎","subcategory":"スリップリング","question":"CT装置のスリップリングが担う主な機能はどれか。","choices":{"a":"回転部の焦点寸法を制御し高分解能撮影を可能にする","b":"回転部の管電圧を制御し低線量撮影を可能にする","c":"回転部の散乱線を除去し高コントラスト撮影を可能にする","d":"回転部へ電力を供給し連続回転撮影を可能にする"},"answer":"d","explanation":"スリップリングは、ガントリーの回転部と固定部との間で、ケーブルを介さずに電力や信号を伝達し、連続回転撮影（ヘリカルスキャン）を実現する。","tags":"電力供給;連続回転"},{"id":"CB-04","category":"CT装置の構成と基礎","subcategory":"X線発生原理","question":"X線管でX線が発生する過程として適切なのはどれか。","choices":{"a":"陽極から放出した電子を陰極で減速させる","b":"陰極から放出した電子を陽極で減速させる","c":"陰極から放出した光子を陽極で加速させる","d":"陽極から放出した光子を陰極で加速させる"},"answer":"b","explanation":"X線管内では、陰極（フィラメント）から放出された電子が陽極（ターゲット）に向かって加速され、陽極で急激に減速される際にX線（制動放射）が発生する。","tags":"電子;陽極;制動放射"},{"id":"CB-05","category":"CT装置の構成と基礎","subcategory":"X線管の熱特性","question":"X線管の陽極熱容量が表すものはどれか。","choices":{"a":"陽極で生じた熱を一時的に蓄える能力","b":"陰極で生じた光を連続的に増幅する能力","c":"検出器で生じた電荷を長時間保持する能力","d":"画像再構成で生じた雑音を除去する能力"},"answer":"a","explanation":"陽極熱容量は、陽極ターゲットがX線発生時に生じる熱をどの程度蓄積できるかを示す指標であり、連続撮影能力や負荷特性を決定する。","tags":"熱蓄積;ターゲット"},{"id":"CB-06","category":"CT装置の構成と基礎","subcategory":"フィルタ","question":"CT装置のボウタイフィルタが果たす役割はどれか。","choices":{"a":"体軸方向の撮影範囲と寝台移動速度を整える","b":"検出器直前で散乱線と一次線を完全に分離する","c":"被写体形状に応じて線質と線量分布を整える","d":"投影データの周波数特性と画像階調を整える"},"answer":"c","explanation":"ボウタイフィルタは、被写体の中心部が厚く周辺部が薄いという形状に合わせて、X線ビームの線量分布を均一化し、検出器への入射線量を最適化する。","tags":"線量均一化;被写体形状"},{"id":"CB-07","category":"CT装置の構成と基礎","subcategory":"コリメータ","question":"患者入射側に設けられたコリメータの主な役割はどれか。","choices":{"a":"患者通過後の散乱線を画像処理で除去する","b":"患者入射前にX線ビームの体軸方向幅を定める","c":"検出信号の収集間隔を電気的に一定化する","d":"再構成画像の表示階調を機械的に限定する"},"answer":"b","explanation":"X線入射側のコリメータは、X線ビームの体軸方向（Z軸方向）の広がりを制限し、撮影するスライス厚を決定する。","tags":"X線幅;スライス厚"},{"id":"CB-08","category":"CT装置の構成と基礎","subcategory":"検出器","question":"一般的な固体シンチレーション検出器の信号変換はどれか。","choices":{"a":"X線を磁気信号に変えて受信コイルで読み出す","b":"X線を音響信号に変えて圧電素子で読み出す","c":"X線を熱信号に変えて温度センサで読み出す","d":"X線を光に変えて光電変換素子で読み出す"},"answer":"d","explanation":"固体シンチレーション検出器は、入射したX線を蛍光体に当てて光に変換し、その光をフォトダイオードなどの光電変換素子で電気信号に変換する。","tags":"シンチレータ;光電変換"},{"id":"CB-09","category":"CT装置の構成と基礎","subcategory":"検出器","question":"CT用検出器に求められる特性の組合せはどれか。","choices":{"a":"低い検出効率、短い残光、狭いダイナミックレンジ","b":"高い検出効率、長い残光、狭いダイナミックレンジ","c":"高い検出効率、短い残光、広いダイナミックレンジ","d":"低い検出効率、長い残光、広いダイナミックレンジ"},"answer":"c","explanation":"CT用検出器には、高効率なX線捕捉（高い検出効率）、高速な信号応答（短い残光）、および幅広いX線強度の正確な測定（広いダイナミックレンジ）が求められる。","tags":"検出効率;残光;ダイナミックレンジ"},{"id":"CB-10","category":"CT装置の構成と基礎","subcategory":"マルチスライスCT","question":"マルチスライスCTの検出器配列の特徴はどれか。","choices":{"a":"回転方向に単一列の検出素子だけを配置する","b":"体軸方向に複数列の検出素子を配置する","c":"寝台内部に複数列の検出素子を配置する","d":"操作卓内部に単一列の検出素子を配置する"},"answer":"b","explanation":"マルチスライスCTは、体軸方向に複数の検出器列を配置することで、一度の回転で複数のスライスのデータを同時に収集可能にしている。","tags":"体軸方向;多列"},{"id":"CB-11","category":"CT装置の構成と基礎","subcategory":"マルチスライスCT","question":"マルチスライスCTの収集スライス厚に直接関係するものはどれか。","choices":{"a":"検出器素子の体軸幅と使用する収集列の組合せ","b":"検出器素子の周方向幅と使用する表示階調の組合せ","c":"画像保存時の圧縮率と使用する転送速度の組合せ","d":"造影注入の流量設定と使用する注入時間の組合せ"},"answer":"a","explanation":"収集されるスライス厚は、検出器の個々の素子の物理的なサイズ（体軸方向幅）と、それらをどのように束ねて（ビニング）データを収集するかで決まる。","tags":"検出器幅;収集列"},{"id":"CB-12","category":"CT装置の構成と基礎","subcategory":"DAS","question":"データ収集システムであるDASの主な役割はどれか。","choices":{"a":"X線管の陽極を回転させて発生熱を分散する","b":"寝台位置を制御して撮影範囲を連続移動する","c":"画像データを保存して院内端末へ配信する","d":"検出信号を増幅してデジタル値に変換する"},"answer":"d","explanation":"DAS（Data Acquisition System）は、検出器から出力される微弱なアナログ電気信号を増幅し、デジタルデータに変換して再構成装置へ送る役割を担う。","tags":"信号増幅;AD変換"},{"id":"CB-13","category":"CT装置の構成と基礎","subcategory":"高電圧発生装置","question":"CT装置の高電圧発生装置が担う役割はどれか。","choices":{"a":"検出器へ信号増幅用の高周波電力を供給する","b":"X線管へ安定した管電圧と管電流を供給する","c":"回転機構へ画像再構成用の投影信号を供給する","d":"操作卓へ造影注入用の圧縮空気を供給する"},"answer":"b","explanation":"高電圧発生装置は、X線管に対して安定した管電圧（kV）と管電流（mA）を供給し、安定したX線出力を維持する。","tags":"管電圧;管電流;安定供給"},{"id":"CB-14","category":"CT装置の構成と基礎","subcategory":"X線管","question":"X線管の焦点寸法と画質および管負荷の関係はどれか。","choices":{"a":"大焦点は空間分解能を高めて許容管負荷を下げる","b":"小焦点は空間分解能を下げて許容管負荷を上げる","c":"大焦点は空間分解能を高めて許容管負荷を上げる","d":"小焦点は空間分解能を高めて許容管負荷を下げる"},"answer":"d","explanation":"小焦点は焦点ボケが小さいため空間分解能は高まるが、熱が一点に集中するため許容管負荷（一度に投入できるエネルギー）は低くなる。","tags":"小焦点;空間分解能;熱負荷"},{"id":"CB-15","category":"CT装置の構成と基礎","subcategory":"寝台","question":"CT装置で寝台位置の精度が重要となる理由はどれか。","choices":{"a":"表示モニタの階調特性を一定に保つため","b":"検出器の発光波長を一定に保つため","c":"撮影位置とヘリカル軌道を正確に保つため","d":"画像保存時の圧縮率を一定に保つため"},"answer":"c","explanation":"ヘリカルスキャンでは、回転と寝台移動が同期しているため、寝台の移動精度が正確でないと、スライス厚や画像再構成の位置関係に誤差が生じる。","tags":"ヘリカル軌道;同期"},{"id":"CB-16","category":"CT装置の構成と基礎","subcategory":"ガントリー","question":"ガントリーのチルト機構を使用する目的はどれか。","choices":{"a":"撮影断面を体軸に対して傾けるために用いる","b":"検出器素子を回転方向へ増やすために用いる","c":"投影データのビット深度を高めるために用いる","d":"造影剤の注入圧力を下げるために用いる"},"answer":"a","explanation":"ガントリーのチルト（傾斜）機構は、撮影断面を体軸に対して角度をつけることで、頭蓋底などの撮影で金属アーチファクトの低減や断面の調整を行うために用いる。","tags":"断面傾斜;チルト"},{"id":"CB-17","category":"CT装置の構成と基礎","subcategory":"回転方式","question":"現在の一般的なCT装置に採用される回転方式はどれか。","choices":{"a":"X線管固定・検出器固定の固定固定方式","b":"X線管回転・検出器固定の回転固定方式","c":"X線管固定・検出器回転の固定回転方式","d":"X線管回転・検出器回転の回転回転方式"},"answer":"d","explanation":"現在のCT装置は、連続回転撮影を実現するために、X線管と検出器の両方をガントリー内で回転させる「回転・回転方式（第3世代）」が一般的である。","tags":"回転回転方式;第3世代"},{"id":"CB-18","category":"CT装置の構成と基礎","subcategory":"ヘリカルスキャン","question":"ヘリカルスキャンの基本的な動作はどれか。","choices":{"a":"X線管を連続回転させながら寝台を連続移動させる","b":"X線管を間欠回転させながら寝台を連続回転させる","c":"検出器を固定させながら寝台を間欠移動させる","d":"検出器を往復移動させながら寝台を間欠回転させる"},"answer":"a","explanation":"ヘリカルスキャンは、X線管を連続的に回転させながら、同時に被写体を載せた寝台を一定速度で連続移動させることで、螺旋状のデータを収集する。","tags":"連続回転;連続移動"},{"id":"CB-19","category":"CT装置の構成と基礎","subcategory":"ヘリカルピッチ","question":"マルチスライスCTにおけるヘリカルピッチの定義はどれか。","choices":{"a":"1回転の寝台移動量を再構成画像のFOVで除した値","b":"1回転の寝台移動量を公称全ビーム幅で除した値","c":"1回転の収集投影数を再構成画像の行列数で除した値","d":"1回転の照射時間をヘリカル撮影の総時間で除した値"},"answer":"b","explanation":"ヘリカルピッチは、1回転あたりの寝台移動量を、X線ビームの全幅（スライス厚の合計）で割った値である。","tags":"寝台移動量;ビーム幅"},{"id":"CB-20","category":"CT装置の構成と基礎","subcategory":"回転時間","question":"ガントリーの回転時間を短くした場合に期待される効果はどれか。","choices":{"a":"空間分解能が常に上昇して画像ノイズが消失する","b":"低コントラスト分解能が常に上昇して線量が低下する","c":"動きに対する時間分解能が向上してぶれが減少する","d":"検出器の体軸方向素子幅が縮小して列数が増加する"},"answer":"c","explanation":"回転時間を短くすると、短時間でデータ収集が完了するため、心臓や拍動する臓器などの動きによるブレが抑えられ、時間分解能が向上する。","tags":"時間分解能;動きブレ"},{"id":"CB-21","category":"CT装置の構成と基礎","subcategory":"FOV","question":"スキャンFOVが規定する範囲はどれか。","choices":{"a":"投影データを収集できる被写体範囲を定める","b":"再構成画像に含める被写体範囲だけを定める","c":"表示画像の白黒階調に割り当てる幅を定める","d":"造影剤を注入できる患者体重範囲を定める"},"answer":"a","explanation":"スキャンFOV（Field of View）は、ガントリー内のX線検出器がデータを収集できる空間的な有効範囲（物理的な測定範囲）を規定する。","tags":"収集範囲;データ測定"},{"id":"CB-22","category":"CT装置の構成と基礎","subcategory":"再構成FOV","question":"画像行列を一定として再構成FOVを小さくした場合の変化はどれか。","choices":{"a":"同じ行列で面内画素寸法が大きくなる","b":"同じ行列で再構成スライス厚が大きくなる","c":"同じ行列で面内画素寸法は変化しない","d":"同じ行列で面内画素寸法が小さくなる"},"answer":"d","explanation":"再構成FOVを小さくすると、同じ画像行列数でその範囲を埋めるため、1画素あたりの物理的なサイズ（画素寸法）が小さくなり、空間分解能が向上する。","tags":"画素サイズ;空間分解能"},{"id":"CB-23","category":"CT装置の構成と基礎","subcategory":"ボクセル","question":"CT画像のボクセル寸法を構成する要素はどれか。","choices":{"a":"表示ウィンドウ幅と表示ウィンドウ中心","b":"撮影管電圧と撮影管電流の設定値","c":"面内画素寸法と再構成スライス厚","d":"造影注入速度と造影注入時間"},"answer":"c","explanation":"ボクセル（3次元的な画素）の寸法は、面内（X-Y平面）の画素サイズ（FOV/行列）と、Z軸方向のスライス厚の積によって定義される。","tags":"面内画素;スライス厚"},{"id":"CB-24","category":"CT装置の構成と基礎","subcategory":"CT値","question":"CT値の基準として用いられる水の値はどれか。","choices":{"a":"水は約-1000 HUとして定義される","b":"水は約0 HUとして定義される","c":"水は約100 HUとして定義される","d":"水は約1000 HUとして定義される"},"answer":"b","explanation":"CT値は物質の線減弱係数を水で基準化した値であり、水は定義上0 HU（Hounsfield Unit）となる。","tags":"水;0 HU"},{"id":"CB-25","category":"CT装置の構成と基礎","subcategory":"CT値","question":"標準的な空気のCT値はどれか。","choices":{"a":"空気のCT値は標準的に約0 HUである","b":"空気のCT値は標準的に約100 HUである","c":"空気のCT値は標準的に約-1000 HUである","d":"空気のCT値は標準的に約1000 HUである"},"answer":"c","explanation":"空気は密度が非常に低いため、線減弱係数は水に比べて極めて小さく、CT値は標準的に約-1000 HUとなる。","tags":"空気;-1000 HU"},{"id":"CB-26","category":"CT装置の構成と基礎","subcategory":"CT値","question":"ある物質のCT値が水より高い場合に示される関係はどれか。","choices":{"a":"水より線減弱係数が小さいことを示す","b":"水より線減弱係数が大きいことを示す","c":"水と線減弱係数が常に等しいことを示す","d":"水との線減弱係数に関係しないことを示す"},"answer":"b","explanation":"CT値は物質の線減弱係数（μ）から算出されるため、CT値が水より高いということは、その物質の線減弱係数が水より大きいことを意味する。","tags":"線減弱係数;高い"},{"id":"CB-27","category":"CT装置の構成と基礎","subcategory":"線減弱係数","question":"物質の線減弱係数を左右する主な因子はどれか。","choices":{"a":"物質の温度と検査時刻および表示階調に依存する","b":"画像の行列と保存形式および転送速度に依存する","c":"寝台の高さと注入速度および撮影範囲に依存する","d":"物質の組成と密度およびX線エネルギーに依存する"},"answer":"d","explanation":"線減弱係数は、物質そのものの密度や原子番号（組成）と、透過するX線のエネルギー（光子エネルギー）に強く依存する。","tags":"組成;密度;X線エネルギー"},{"id":"CB-28","category":"CT装置の構成と基礎","subcategory":"ビームハードニング","question":"X線のビームハードニングを表す現象はどれか。","choices":{"a":"低エネルギー成分が優先的に吸収され平均エネルギーが上がる","b":"高エネルギー成分が優先的に吸収され平均エネルギーが下がる","c":"全エネルギー成分が同率に吸収され平均エネルギーが保たれる","d":"散乱線成分だけが優先的に吸収され平均エネルギーが下がる"},"answer":"a","explanation":"ビームハードニングは、透過過程で低エネルギーのX線が先に吸収されるため、透過後のX線の平均エネルギーが高くなる現象である。","tags":"低エネルギー;吸収;平均エネルギー"},{"id":"CB-29","category":"CT装置の構成と基礎","subcategory":"ウィンドウ表示","question":"CT画像表示におけるウィンドウ幅の説明はどれか。","choices":{"a":"表示するCT値範囲の中心を表す","b":"表示するCT値範囲の幅を表す","c":"再構成する投影角度の中心を表す","d":"再構成する投影角度の幅を表す"},"answer":"b","explanation":"ウィンドウ幅（Window Width: WW）は、画像として表示するCT値の範囲の「幅」を規定するパラメータである。","tags":"WW;範囲"},{"id":"CB-30","category":"CT装置の構成と基礎","subcategory":"ウィンドウ表示","question":"CT画像表示におけるウィンドウレベルの説明はどれか。","choices":{"a":"表示するCT値範囲の中心を表す","b":"表示するCT値範囲の上限を表す","c":"表示するCT値範囲の下限を表す","d":"表示するCT値範囲の幅だけを表す"},"answer":"a","explanation":"ウィンドウレベル（Window Level: WL）は、表示するCT値範囲の「中心値」を規定するパラメータである。","tags":"WL;中心値"},{"id":"CB-31","category":"CT装置の構成と基礎","subcategory":"ウィンドウ表示","question":"ウィンドウレベルを一定としてウィンドウ幅を狭くした場合の変化はどれか。","choices":{"a":"表示コントラストが低下し範囲外のCT値が減る","b":"表示コントラストが低下し範囲外のCT値が増える","c":"表示コントラストが上昇し範囲外のCT値が増える","d":"表示コントラストが上昇し範囲外のCT値が減る"},"answer":"c","explanation":"ウィンドウ幅を狭くすると、表示するCT値の範囲が限定されるため、階調のコントラストが上昇し、範囲外の数値は黒または白に飽和するため範囲外のデータ量は増える。","tags":"コントラスト;範囲"},{"id":"CB-32","category":"CT装置の構成と基礎","subcategory":"ウィンドウ表示","question":"ウィンドウ幅をWW、ウィンドウレベルをWLとした場合の表示範囲はどれか。","choices":{"a":"下限をWL-WW、上限をWL+WWとする","b":"下限をWW-WL、上限をWW+WLとする","c":"下限をWL+WW/2、上限をWL-WW/2とする","d":"下限をWL-WW/2、上限をWL+WW/2とする"},"answer":"d","explanation":"ウィンドウ表示の範囲は、レベルを中心として、幅の半分をプラスおよびマイナスした範囲（WL - WW/2 ～ WL + WW/2）となる。","tags":"表示範囲;算出式"},{"id":"CB-33","category":"CT装置の構成と基礎","subcategory":"部分容積効果","question":"CT画像における部分容積効果の説明はどれか。","choices":{"a":"1ボクセル内の異なる組織が平均化され中間のCT値を示す","b":"1ボクセル内の同一組織が強調され極端なCT値を示す","c":"全投影角度の信号が欠落して一様なCT値を示す","d":"全検出器列の感度が上昇して一定のCT値を示す"},"answer":"a","explanation":"部分容積効果（Partial Volume Effect）は、1つのボクセル内に密度の異なる組織が混在する場合、それらの平均値としてCT値が計算される現象である。","tags":"ボクセル混在;平均値"},{"id":"CB-34","category":"CT装置の構成と基礎","subcategory":"投影データ","question":"CTの投影データが表す情報はどれか。","choices":{"a":"各検出器で測定した被写体表面の反射率情報","b":"各検出器で測定した被写体内部の発光量情報","c":"各検出器で測定したX線経路上の減弱情報","d":"各検出器で測定した造影剤注入部の圧力情報"},"answer":"c","explanation":"CTの投影データ（サイノグラム）は、X線源から検出器に至る経路上でのX線強度の減弱（吸収と散乱）を積分した値である。","tags":"減弱;投影データ"},{"id":"CB-35","category":"CT装置の構成と基礎","subcategory":"データ処理","question":"透過X線強度比に対数変換を行う主な目的はどれか。","choices":{"a":"透過強度比を検出器配列の角度座標へ変換する","b":"透過強度比を患者寝台の移動距離へ変換する","c":"透過強度比を表示画像の階調範囲へ変換する","d":"透過強度比を減弱係数の線積分値へ変換する"},"answer":"d","explanation":"減弱は指数関数的に生じるため、透過強度比の対数をとることで、減弱係数の線積分値（投影値）を線形な値として扱い、再構成計算を可能にする。","tags":"対数変換;線積分"},{"id":"CB-36","category":"CT装置の構成と基礎","subcategory":"画像再構成","question":"フィルタ補正逆投影法の基本的な処理はどれか。","choices":{"a":"投影データを補間せず単純加算だけで画像化する","b":"投影データをフィルタ処理して逆投影し画像化する","c":"投影データを二値化して順投影だけで画像化する","d":"投影データを圧縮して表示装置へ直接画像化する"},"answer":"b","explanation":"フィルタ補正逆投影法（Filtered Back Projection: FBP）は、投影データにフィルタ（畳み込み関数）をかけて周波数特性を補正した後、逆投影して画像を再構成する手法。","tags":"FBP;フィルタ;逆投影"},{"id":"CB-37","category":"CT装置の構成と基礎","subcategory":"画像再構成","question":"フィルタ補正逆投影法でフィルタ処理を行う目的はどれか。","choices":{"a":"単純逆投影で生じる線量不足を時間特性で補う","b":"単純逆投影で生じる信号欠損を体軸特性で補う","c":"単純逆投影で生じる階調不足を濃度特性で補う","d":"単純逆投影で生じる画像ぼけを周波数特性で補う"},"answer":"d","explanation":"単純逆投影では像がぼけてしまうため、高周波を強調するフィルタ（ランプフィルタ等）を用いることで画像ぼけを除去・補正する。","tags":"ぼけ除去;周波数補正"},{"id":"CB-38","category":"CT装置の構成と基礎","subcategory":"再構成関数","question":"高周波成分を強調する鋭い再構成関数の一般的な特徴はどれか。","choices":{"a":"空間分解能を下げて画像ノイズを減らす","b":"空間分解能を上げて画像ノイズを増やす","c":"空間分解能を下げて画像ノイズを増やす","d":"空間分解能を上げて画像ノイズを減らす"},"answer":"b","explanation":"高周波強調型の再構成関数は、エッジを鋭くして空間分解能を向上させるが、同時に画像上の統計的ノイズも強調されてしまうというトレードオフがある。","tags":"高周波;空間分解能;ノイズ"},{"id":"CB-39","category":"CT装置の構成と基礎","subcategory":"再構成関数","question":"平滑化を重視した再構成関数の一般的な特徴はどれか。","choices":{"a":"画像ノイズを抑えるが高周波成分も弱める","b":"画像ノイズを増やすが高周波成分も弱める","c":"画像ノイズを抑えるが高周波成分を強める","d":"画像ノイズを増やすが高周波成分を強める"},"answer":"a","explanation":"平滑化（スムージング）重視の関数は、画像上のノイズを低減させるが、代償としてエッジや細かい構造を示す高周波成分も抑制され、全体的に画像はぼやける。","tags":"平滑化;ノイズ低減;ぼけ"},{"id":"CB-40","category":"CT装置の構成と基礎","subcategory":"再構成関数","question":"再構成関数を選択する際の基本的な考え方はどれか。","choices":{"a":"すべての検査で共通する単一の関数を選択する","b":"患者の体格だけに基づいて単一の関数を選択する","c":"観察する組織と診断目的に応じた関数を選択する","d":"画像の保存期間だけに基づいて関数を選択する"},"answer":"c","explanation":"再構成関数は、診断対象の組織（骨、軟部組織、肺など）や撮影の目的に応じて、空間分解能とノイズのバランスを最適化するように選択する。","tags":"目的;組織;最適化"},{"id":"CB-41","category":"CT装置の構成と基礎","subcategory":"逐次近似再構成","question":"逐次近似再構成の基本原理を表すものはどれか。","choices":{"a":"表示画像だけを反復して階調変換する手法","b":"推定投影と実測投影の差を反復して減らす手法","c":"造影注入だけを反復して濃度調整する手法","d":"寝台移動だけを反復して位置調整する手法"},"answer":"b","explanation":"逐次近似再構成は、仮の画像から推定投影データを計算し、実際の実測投影データとの差分を求めて画像を逐次修正していく反復的な計算手法である。","tags":"反復計算;推定;実測"},{"id":"CB-42","category":"CT装置の構成と基礎","subcategory":"逐次近似再構成","question":"逐次近似再構成に期待される一般的な効果はどれか。","choices":{"a":"再構成FOVを保ったまま画素数を無制限に増やせる","b":"被ばく線量を保ったまま分解能を無制限に上げられる","c":"統計モデルを用いてノイズやアーチファクトを抑えられる","d":"収集列数を保ったまま検出器素子幅を物理的に縮められる"},"answer":"c","explanation":"逐次近似再構成は、統計モデルや物理モデルを取り入れることで、少ないデータや低線量下でもノイズやアーチファクトを低減し、高画質な画像を再構成できる。","tags":"統計モデル;ノイズ;低減"},{"id":"CB-43","category":"CT装置の構成と基礎","subcategory":"スライス厚","question":"再構成スライス厚と再構成間隔の関係を表す説明はどれか。","choices":{"a":"再構成スライス厚は断面の厚さ、間隔は中心間距離を表す","b":"再構成スライス厚は中心間距離、間隔は断面の厚さを表す","c":"再構成スライス厚と間隔は常に同じ値でなければならない","d":"再構成スライス厚と間隔はどちらも表示FOVだけを表す"},"answer":"a","explanation":"再構成スライス厚（Slice Thickness）は1枚の画像の物理的な厚み、再構成間隔（Interval）は隣り合う画像中心同士の距離を示す。","tags":"厚さ;中心間距離"},{"id":"CB-44","category":"CT装置の構成と基礎","subcategory":"再構成間隔","question":"オーバーラップ再構成の設定と効果の組合せはどれか。","choices":{"a":"間隔を厚さより大きくし体軸方向の標本数を増やす","b":"間隔を厚さより大きくし面内方向の標本数を増やす","c":"間隔を厚さより小さくし面内方向の標本数を増やす","d":"間隔を厚さより小さくし体軸方向の標本数を増やす"},"answer":"d","explanation":"オーバーラップ再構成は、スライス厚よりも間隔を小さくすることで、隣り合う画像同士を重ね合わせ、体軸方向のサンプリング密度を上げる。","tags":"オーバーラップ;サンプリング"},{"id":"CB-45","category":"CT装置の構成と基礎","subcategory":"MPR","question":"任意方向のMPRに適したボクセル形状はどれか。","choices":{"a":"面内画素より体軸寸法が著しく大きいボクセル","b":"面内画素より体軸寸法が著しく小さいボクセル","c":"面内画素と体軸寸法がほぼ等しいボクセル","d":"面内画素と体軸寸法が常に異なるボクセル"},"answer":"c","explanation":"MPR（多断面変換）で高画質な再構成を行うには、X, Y, Zすべての方向で分解能を均一にする必要があるため、ボクセルが立方体（等方ボクセル）に近いことが理想的である。","tags":"等方ボクセル;立方体"},{"id":"CB-46","category":"CT装置の構成と基礎","subcategory":"MIP","question":"最大値投影法であるMIPの処理はどれか。","choices":{"a":"視線上で最大のCT値を選んで投影する","b":"視線上で最小的のCT値を選んで投影する","c":"視線上で平均のCT値だけを断面化する","d":"視線上で中央値のCT値だけを断面化する"},"answer":"a","explanation":"MIP（Maximum Intensity Projection）は、設定した投影方向に沿った視線上で、最も大きいCT値を持つ画素だけを選択して画像化する手法。","tags":"最大値;投影"},{"id":"CB-47","category":"CT装置の構成と基礎","subcategory":"MinIP","question":"最小値投影法であるMinIPの処理はどれか。","choices":{"a":"視線上で最大のCT値を選んで投影する","b":"視線上で最小のCT値を選んで投影する","c":"視線上で平均のCT値だけを投影する","d":"視線上で合計のCT値だけを投影する"},"answer":"b","explanation":"MinIP（Minimum Intensity Projection）は、視線上で最も小さいCT値を持つ画素だけを選択して画像化する手法であり、気管支や肺胞などの空気の描出に適している。","tags":"最小値;投影"},{"id":"CB-48","category":"CT装置の構成と基礎","subcategory":"ボリュームレンダリング","question":"CTワークステーションで行うボリュームレンダリングの説明はどれか。","choices":{"a":"各ボクセルを二値化し単一断面だけを投影表示する","b":"最大CT値のボクセルだけを選択して投影表示する","c":"最小CT値のボクセルだけを選択して投影表示する","d":"各ボクセルに色と不透明度を設定して投影表示する"},"answer":"d","explanation":"ボリュームレンダリング（VR）は、すべてのボクセルデータに対してCT値に応じた色や不透明度（不透明度関数）を設定し、3次元的な構造を半透明に表現する。","tags":"色;不透明度;3D"},{"id":"CB-49","category":"CT装置の構成と基礎","subcategory":"システム連携","question":"CTと連携するRISおよびPACSの役割分担はどれか。","choices":{"a":"RISは検査情報を管理しPACSは画像を保存配信する","b":"RISは画像を再構成しPACSは造影剤を自動注入する","c":"RISは管電圧を制御しPACSは寝台位置を調整する","d":"RISは画像を検出しPACSはX線ビームを成形する"},"answer":"a","explanation":"RIS（放射線情報システム）は患者の予約や検査情報を管理し、PACS（画像保存通信システム）は生成されたDICOM画像を保存および配信する役割を持つ。","tags":"RIS;PACS;検査管理"},{"id":"CB-50","category":"CT装置の構成と基礎","subcategory":"造影インジェクター","question":"CT検査で使用する造影剤インジェクターの主な機能はどれか。","choices":{"a":"投影データの逆投影と再構成関数の選択を行う","b":"造影剤の注入量と注入速度および開始時刻を制御する","c":"X線管の焦点寸法と陽極回転速度および熱量を制御する","d":"検出器の素子幅と収集列数および残光時間を制御する"},"answer":"b","explanation":"造影剤インジェクターは、CT検査において造影剤をあらかじめ設定した注入量、流速、タイミング（開始時刻）に従って自動的に静脈へ注入する装置である。","tags":"自動注入;流速;タイミング"},{"id":"RP-01","category":"画像再構成と画像処理","subcategory":"画像再構成処理","question":"フィルタ補正逆投影法の基本的な処理手順はどれか。","choices":{"a":"投影データをフィルタ処理してから逆投影する","b":"投影データを二値化処理してから順投影する","c":"再構成画像を補間処理してから逆投影する","d":"再構成画像を平滑化処理してから順投影する"},"answer":"a","explanation":"フィルタ補正逆投影法（FBP法）は、収集した投影データに対してフィルタ（畳み込み演算）を施した後に逆投影を行って画像を再構成する。","tags":"FBP法;フィルタ処理;逆投影"},{"id":"RP-02","category":"画像再構成と画像処理","subcategory":"フィルタ処理","question":"フィルタ補正逆投影法でランプフィルタを用いる主な目的はどれか。","choices":{"a":"量子ノイズによる粒状性を完全に除去する","b":"逆投影で生じるぼけを周波数補正する","c":"体動による画像の位置ずれを時間補正する","d":"金属による投影欠損を領域補間で修復する"},"answer":"b","explanation":"単純逆投影法では画像にぼけ（1/rのボケ）が生じるため、ランプフィルタを用いて周波数空間で補正し、ぼけを除去する。","tags":"ランプフィルタ;周波数補正;ぼけ除去"},{"id":"RP-03","category":"画像再構成と画像処理","subcategory":"再構成関数","question":"高鮮鋭度の再構成関数を使用したときの一般的な変化はどれか。","choices":{"a":"低周波成分と画像ノイズがともに増える","b":"高周波成分と画像ノイズがともに減る","c":"高周波成分と画像ノイズがともに増える","d":"低周波成分と画像ノイズがともに減る"},"answer":"c","explanation":"高鮮鋭度（鋭い）の再構成関数を使用すると、エッジ強調により空間分解能が向上するが、同時に高周波成分のノイズも増加する。","tags":"高鮮鋭度;空間分解能;ノイズ増加"},{"id":"RP-04","category":"画像再構成と画像処理","subcategory":"再構成関数","question":"平滑型の再構成関数を使用したときの一般的な変化はどれか。","choices":{"a":"画像ノイズと空間分解能がともに上昇する","b":"画像ノイズが上昇し空間分解能が低下する","c":"画像ノイズが低下し空間分解能が上昇する","d":"画像ノイズと空間分解能がともに低下する"},"answer":"d","explanation":"平滑型の再構成関数を使用すると、高周波成分が抑制されるため画像ノイズは低下するが、同時に空間分解能も低下して画像がぼやける。","tags":"平滑型;ノイズ低下;空間分解能低下"},{"id":"RP-05","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"CT再構成に用いる投影方向の数が不足した場合に生じやすい現象はどれか。","choices":{"a":"細かな縞状または放射状の偽像が生じる","b":"画像全体のCT値が一定量だけ上昇する","c":"体軸方向のスライス厚だけが均一になる","d":"表示画像のウィンドウ幅だけが狭くなる"},"answer":"a","explanation":"投影方向の数が不足すると、サンプリング不足によりストリークアーチファクト（細かな縞状や放射状の偽像）が生じる。","tags":"投影数不足;ストリークアーチファクト;偽像"},{"id":"RP-06","category":"画像再構成と画像処理","subcategory":"校正処理","question":"CT装置で検出器の感度校正を行う主な目的はどれか。","choices":{"a":"管球焦点ごとの実効寸法を均一化する","b":"検出器素子ごとの感度差を補正する","c":"患者部位ごとの吸収差を均一化する","d":"画像領域ごとの表示階調を補正する"},"answer":"b","explanation":"検出器の感度校正（キャリブレーション）は、各検出器素子の特性のばらつき（感度差）を補正し、リングアーチファクトなどを防ぐために行う。","tags":"感度校正;素子感度差;キャリブレーション"},{"id":"RP-07","category":"画像再構成と画像処理","subcategory":"ヘリカルスキャン","question":"ヘリカルCTで補間再構成を行う主な目的はどれか。","choices":{"a":"同一投影角度の画像から管電流値を推定する","b":"異なる時相の画像から造影濃度を推定する","c":"異なるz位置の投影から目的断面を推定する","d":"同一z位置の画像から被写体の動きを推定する"},"answer":"c","explanation":"ヘリカルスキャンではガントリーが連続回転しながら寝台が移動するため、得られたデータから目的のz位置（スライス面）のデータを補間によって求めて再構成する。","tags":"ヘリカルCT;補間再構成;z位置"},{"id":"RP-08","category":"画像再構成と画像処理","subcategory":"ヘリカルピッチ","question":"1回転当たりの寝台移動距離を増やし、総ビーム幅を一定にした場合の変化はどれか。","choices":{"a":"ヘリカルピッチは変化しない","b":"ヘリカルピッチはゼロになる","c":"ヘリカルピッチは小さくなる","d":"ヘリカルピッチは大きくなる"},"answer":"d","explanation":"ヘリカルピッチは「1回転当たりの寝台移動量 / 総ビーム幅」で定義されるため、総ビーム幅が一定で寝台移動距離を増やすとピッチは大きくなる。","tags":"ヘリカルピッチ;寝台移動距離;総ビーム幅"},{"id":"RP-09","category":"画像再構成と画像処理","subcategory":"ヘリカルピッチ","question":"マルチスライスCTにおけるヘリカルピッチの定義はどれか。","choices":{"a":"1回転の寝台移動距離を総ビーム幅で除した値","b":"1回転の寝台移動距離を検出器幅で除した値","c":"1回転の寝台移動距離を再構成厚で除した値","d":"1回転の寝台移動距離を撮影視野で除した値"},"answer":"a","explanation":"マルチスライスCTにおけるヘリカルピッチは、ガントリー1回転あたりの寝台移動距離を、そのときの総ビーム幅（公称ビーム幅）で割った値として定義される。","tags":"ヘリカルピッチ;定義;総ビーム幅"},{"id":"RP-10","category":"画像再構成と画像処理","subcategory":"画像再構成","question":"同じCT投影データを用いる遡及的再構成で変更できる項目はどれか。","choices":{"a":"撮影時の管電圧と管電流を変更できる","b":"再構成関数と画像間隔を変更できる","c":"撮影時の造影剤注入量を変更できる","d":"患者体位と呼吸状態を変更できる"},"answer":"b","explanation":"遡及的再構成（リコンストラクション）では、保存されている生データ（投影データ）を用いて、再構成関数や画像間隔、スライス厚などを変更して再画像化できる。","tags":"遡及的再構成;生データ;再構成関数"},{"id":"RP-11","category":"画像再構成と画像処理","subcategory":"画像再構成","question":"薄い再構成画像を重ね合わせて作成する主な利点はどれか。","choices":{"a":"面内の画素寸法を自動的に縮小できる","b":"投影データの角度数を自動的に増加できる","c":"MPRや3D画像の段差を目立ちにくくできる","d":"被写体の量子ノイズを完全に除去できる"},"answer":"c","explanation":"薄いスライスで収集・再構成した画像をオーバーラップさせて用いることで、MPRや3D画像作成時の体軸方向の階段状アーチファクト（段差）を目立ちにくくできる。","tags":"薄いスライス;オーバーラップ;MPR"},{"id":"RP-12","category":"画像再構成と画像処理","subcategory":"ボクセル","question":"等方性ボクセルの説明として適切なのはどれか。","choices":{"a":"画素値が三方向でほぼ同じ状態である","b":"画像枚数が三方向でほぼ同じ状態である","c":"撮影時間が三方向でほぼ同じ状態である","d":"空間寸法が三方向でほぼ同じ状態である"},"answer":"d","explanation":"等方性ボクセル（アイソトロピックボクセル）とは、X軸、Y軸、Z軸のすべての方向における空間寸法（画素サイズとスライス厚）がほぼ等しいボクセルのこと。","tags":"等方性ボクセル;空間寸法;アイソトロピック"},{"id":"RP-13","category":"画像再構成と画像処理","subcategory":"逐次近似再構成","question":"逐次近似再構成法の基本的な処理に含まれるものはどれか。","choices":{"a":"推定画像の順投影と実測投影の比較を反復する","b":"表示画像の階調変換と二値化だけを反復する","c":"位置決め画像の拡大と縮小だけを反復する","d":"再構成画像の回転と反転だけを反復する"},"answer":"a","explanation":"逐次近似再構成法は、仮の画像（推定画像）から計算した順投影データと、実際の実測投影データとの比較・誤差修正を繰り返し計算（反復処理）して画像を生成する。","tags":"逐次近似再構成;順投影;実測投影;反復"},{"id":"RP-14","category":"画像再構成と画像処理","subcategory":"逐次近似再構成","question":"統計的逐次近似再構成法で明示的に扱われる要素はどれか。","choices":{"a":"患者体位の左右差を表す幾何学的分布","b":"光子計数のばらつきを表す統計적分布","c":"画像表示の色調差を表す視覚的分布","d":"検査予約の時間差を表す運用的分布"},"answer":"b","explanation":"統計的逐次近似再構成法では、X線フォトンの量子ノイズ（光子計数のばらつき）に基づく統計モデルをアルゴリズムに組み込んでノイズを制御する。","tags":"統計的逐次近似再構成;光子計数;統計モデル"},{"id":"RP-15","category":"画像再構成と画像処理","subcategory":"逐次近似再構成","question":"モデルベース逐次近似再構成法が詳細にモデル化する対象はどれか。","choices":{"a":"表示装置の色域と観察室の照度特性","b":"造影剤の注入速度と体内循環の特性","c":"焦点寸法や検出器応答などの装置特性","d":"患者受付や画像転送などの運用特性"},"answer":"c","explanation":"モデルベース逐次近似再構成法（MBIR）は、X線管の焦点サイズや検出器の物理的応答など、システム全体の物理モデルを詳細にモデル化して再構成を行う。","tags":"モデルベース逐次近似再構成;物理モデル;装置特性"},{"id":"RP-16","category":"画像再構成と画像処理","subcategory":"逐次近似再構成","question":"ハイブリッド型逐次近似再構成法の特徴はどれか。","choices":{"a":"MPR処理とMIP処理を組み合わせて画像を作る","b":"透視画像と位置決め画像を組み合わせて画像を作る","c":"二値画像とカラー画像を組み合わせて画像を作る","d":"解析的再構成と逐次処理を組み合わせて画像を作る"},"answer":"d","explanation":"ハイブリッド型逐次近似再構成法は、従来のFBP法（解析的再構成）による画像と、空間領域または投影領域での逐次的なノイズ低減処理（逐次処理）を組み合わせて用いる。","tags":"ハイブリッド型;FBP;逐次処理"},{"id":"RP-17","category":"画像再構成と画像処理","subcategory":"逐次近似再構成","question":"深層学習を利用したCT画像再構成の特徴はどれか。","choices":{"a":"学習済みモデルを用いて画像やノイズを推定する","b":"固定閾値だけを用いて画像やノイズを推定する","c":"表示階調だけを用いて画像やノイズを推定する","d":"寝台速度だけを用いて画像やノイズを推定する"},"answer":"a","explanation":"深層学習（ディープラーニング）を用いたCT画像再構成では、あらかじめ学習させたAIモデル（学習済みモデル）を利用して、高精度にノイズやアーチファクトを抑制した画像を推定する。","tags":"深層学習;AI;学習済みモデル"},{"id":"RP-18","category":"画像再構成と画像処理","subcategory":"逐次近似再構成","question":"投影データ領域で行う逐次近似処理の説明として適切なのはどれか。","choices":{"a":"表示画像の色調情報だけを反復処理に利用する","b":"検出器で収集した投影情報を反復処理に利用する","c":"画像一覧の付帯情報だけを反復処理に利用する","d":"位置決め画像の輪郭情報だけを反復処理に利用する"},"answer":"b","explanation":"投影データ領域で行う逐次近似処理では、検出器で得られた生データ（投影データ）の段階で統計モデルに基づいたノイズ低減や補正を反復して行う。","tags":"投影データ領域;生データ;反復処理"},{"id":"RP-19","category":"画像再構成と画像処理","subcategory":"逐次近似再構成","question":"逐次近似再構成の強度を高く設定した場合に起こり得る変化はどれか。","choices":{"a":"ノイズが増加し画像の粒状性だけが強くなる","b":"ノイズが不変で画像の色相だけが変化する","c":"ノイズが減少し画像の質感が変化する","d":"ノイズが消失し空間分解能が無限に高くなる"},"answer":"c","explanation":"逐次近似再構成の処理強度を強くしすぎると、画像ノイズは大きく減少する一方で、画像全体の質感が滑らかになりすぎたり（プラスチック様）、独特のテクスチャに変化したりする。","tags":"逐次近似再構成;強度;質感変化"},{"id":"RP-20","category":"画像再構成と画像処理","subcategory":"逐次近似再構成","question":"逐次近似再構成を用いた線量低減を評価する際に重要な確認事項はどれか。","choices":{"a":"装置表示線量だけが減少したかを確認する","b":"画像の標準偏差だけが一定かを確認する","c":"画像再構成時間だけが短いかを確認する","d":"診断課題の画質が保てるかを確認する"},"answer":"d","explanation":"逐次近似再構成等による線量低減を評価する際は、単に線量が下がったことだけでなく、実際の臨床診断に必要な画質（診断課題を遂行できる画質）がしっかりと保たれているかを確認することが最も重要である。","tags":"線量低減;画質評価;診断課題"},{"id":"RP-21","category":"画像再構成と画像処理","subcategory":"MPR","question":"MPRの基本的な機能はどれか。","choices":{"a":"体積データから任意方向の断面像を作成する","b":"投影データから管電流の時間変化を作成する","c":"位置決め画像から患者の体表面像を作成する","d":"生データから検出器の感度分布像を作成する"},"answer":"a","explanation":"MPR（多断面再構成：Multiplanar Reconstruction）は、3次元ボリュームデータ（体積データ）から任意の方向の断面像を再構成して表示する基本機能である。","tags":"MPR;多断面再構成;任意方向"},{"id":"RP-22","category":"画像再構成と画像処理","subcategory":"MPR","question":"斜位MPRが特に有用な場面はどれか。","choices":{"a":"検出器校正値を撮影前に確認するとき","b":"構造物の長軸に合わせた断面を観察するとき","c":"投影データの欠損位置を撮影後に確認するとき","d":"管電圧の時間変化を検査後に観察するとき"},"answer":"b","explanation":"斜位MPR（オブリークMPR）は、血管や神経などの曲がりくねった構造物や特定の生体構造の長軸方向・短軸方向に合わせた断面を詳細に観察する際に極めて有用である。","tags":"斜位MPR;オブリーク;長軸観察"},{"id":"RP-23","category":"画像再構成と画像処理","subcategory":"MPR","question":"曲面に沿った構造を一つの平面上に展開して観察する処理はどれか。","choices":{"a":"直交MPRによる断面再構成","b":"最小値投影による透過再構成","c":"曲面MPRによる展開再構成","d":"表面表示による輪郭再構成"},"answer":"c","explanation":"曲面MPR（CPR：Curved Planar Reconstruction）は、血管などの曲面・弯曲した構造に沿って線を引き、その軌道に沿った領域を1枚の平面上に展開して表示する処理である。","tags":"曲面MPR;CPR;展開再構成"},{"id":"RP-24","category":"画像再構成と画像処理","subcategory":"MPR","question":"厚みを持たせたスラブMPRの説明として適切なのはどれか。","choices":{"a":"単一画素を複数の表示色へ分離する処理である","b":"単一投影を複数の撮影角度へ分離する処理である","c":"複数時相を一つの撮影時刻へ変換する処理である","d":"複数断面を一定の厚みでまとめて表示する処理である"},"answer":"d","explanation":"スラブMPR（厚肉MPR）は、一定の厚み（スラブ厚）を持たせた領域内の情報をまとめて（平均化や最大値・最小値等で）1枚の画像として表示する処理である。","tags":"スラブMPR;厚み;まとめ表示"},{"id":"RP-25","category":"画像再構成と画像処理","subcategory":"MIP","question":"MIPで表示画素値を決定する方法はどれか。","choices":{"a":"視線上にある最大CT値を選択する","b":"視線上にある最小CT値を選択する","c":"視線上にある中央CT値を選択する","d":"視線上にある平均CT値を選択する"},"answer":"a","explanation":"MIP（最大値投影：Maximum Intensity Projection）は、視線（レイ）上に存在するボクセルのうち、最も大きい（最大の見かけ上の）CT値を持つ画素を抽出して2次元画像化する。","tags":"MIP;最大値投影;最大CT値"},{"id":"RP-26","category":"画像再構成と画像処理","subcategory":"MIP","question":"造影血管をMIPで表示するときの代表的な注意点はどれか。","choices":{"a":"低吸収構造が常に血管内腔を強く強調する","b":"骨や石灰化が血管と重なり観察を妨げる","c":"表示方向を変えても画像がまったく変化しない","d":"スラブを厚くすると重なりが必ず減少する"},"answer":"b","explanation":"MIPはCT値の最も高いものを描出するため、高吸収である骨や血管壁の石灰化が造影血管と重なり合っている場合、血管の観察を妨げることがあるため注意が必要である。","tags":"MIP;造影血管;骨の重なり"},{"id":"RP-27","category":"画像再構成と画像処理","subcategory":"MinIP","question":"MinIPが観察に適している対象はどれか。","choices":{"a":"高吸収となる造影動脈や骨皮質","b":"中間吸収となる筋肉や実質臓器","c":"低吸収となる気道や肺気腫領域","d":"高吸収となる石灰化や金属材料"},"answer":"c","explanation":"MinIP（最小値投影：Minimum Intensity Projection）は視線上の最小CT値を抽出するため、気管支の空気腔や肺の低吸収領域（肺気腫など）の観察に最適である。","tags":"MinIP;最小値投影;気道;肺気腫"},{"id":"RP-28","category":"画像再構成と画像処理","subcategory":"ボリュームレンダリング","question":"ボリュームレンダリングの特徴はどれか。","choices":{"a":"最大値を持つボクセルだけを平面表示する","b":"最小値を持つボクセルだけを平面表示する","c":"閾値を超えた表面だけを単色表示する","d":"各ボクセルへ色と不透明度を割り当てる"},"answer":"d","explanation":"ボリュームレンダリング（VR）は、すべてのボクセルに対してCT値に応じた「色」と「不透明度」を割り当て、3次元的な立体感を保持したまま2次元表示する手法である。","tags":"ボリュームレンダリング;VR;色と不透明度"},{"id":"RP-29","category":"画像再構成と画像処理","subcategory":"ボリュームレンダリング","question":"ボリュームレンダリングにおける伝達関数の役割はどれか。","choices":{"a":"CT値を色や不透明度へ対応させる","b":"CT値を管電圧や管電流へ対応させる","c":"CT値を寝台速度や回転時間へ対応させる","d":"CT値を検査時刻や画像番号へ対応させる"},"answer":"a","explanation":"ボリュームレンダリングにおける伝達関数（カラー・オパシティ・マップ）は、ボクセルの持つCT値の大きさを、どの「色」と「不透明度」に割り当てるかを定義するものである。","tags":"伝達関数;色;不透明度"},{"id":"RP-30","category":"画像再構成と画像処理","subcategory":"ボリュームレンダリング","question":"ボリュームレンダリングで不透明度を高く設定した組織はどのように表示されるか。","choices":{"a":"背後の構造を透過しやすい状態で表示される","b":"背後の構造を隠しやすい状態で表示される","c":"CT値が自動的に低下した状態で表示される","d":"空間分解能が自動的に上昇して表示される"},"answer":"b","explanation":"ボリュームレンダリングにおいて特定の組織の不透明度を高く設定すると、その組織が不透明になり、その背後にある他の構造を隠す（遮る）ような見え方になる。","tags":"ボリュームレンダリング;不透明度;遮蔽"},{"id":"RP-31","category":"画像再構成と画像処理","subcategory":"セグメンテーション","question":"3D画像処理におけるセグメンテーションの目的はどれか。","choices":{"a":"全ボクセルのCT値を同じ値へ変更する","b":"全投影データの角度を同じ方向へ変更する","c":"目的臓器や病変を周囲組織から分離する","d":"撮影時の管電流を画像領域ごとに変更する"},"answer":"c","explanation":"セグメンテーション（領域抽出）は、3D画像構築や解析の際、対象となる目的の臓器や血管、病変などを周囲の不要な組織から切り離して抽出するための処理である。","tags":"セグメンテーション;領域抽出;分離"},{"id":"RP-32","category":"画像再構成と画像処理","subcategory":"表面陰影表示法","question":"表面陰影表示法の特徴はどれか。","choices":{"a":"全ボクセルへ連続的な不透明度を設定する","b":"視線上の最大値だけを抽出して表示する","c":"視線上の最小値だけを抽出して表示する","d":"設定閾値で抽出した表面を立体表示する"},"answer":"d","explanation":"表面陰影表示法（SSD：Shaded Surface Display）は、あらかじめ設定した閾値（スレッショルド）を超える境界を抽出し、その表面を立体的に表示する手法である。","tags":"SSD;表面陰影表示法;閾値;表面表示"},{"id":"RP-33","category":"画像再構成と画像処理","subcategory":"部分容積効果","question":"部分容積効果が発生する機序はどれか。","choices":{"a":"一つのボクセル内に複数組織が含まれる","b":"一つの投影角度に複数時相が含まれる","c":"一つの検査画像に複数患者が含まれる","d":"一つの表示階調に複数色相が含まれる"},"answer":"a","explanation":"部分容積効果（PVE）は、1つのボクセル（体素）の大きさが有限であるため、その中に性質や密度の異なる複数の組織が混在することによって中間的なCT値になってしまう現象。","tags":"部分容積効果;ボクセル混在;平均化"},{"id":"RP-34","category":"画像再構成と画像処理","subcategory":"部分容積効果","question":"体軸方向の部分容積効果を軽減するために有効な方法はどれか。","choices":{"a":"再構成スライスを厚くして平均化を強める","b":"再構成スライスを薄くして混在範囲を減らす","c":"表示ウィンドウを狭くして画素寸法を小さくする","d":"撮影視野を広くして検出器感度を均一にする"},"answer":"b","explanation":"体軸方向の部分容積効果を軽減するには、再構成スライス厚を薄く（細かく）し、1つのスライスに混在する異なる組織の範囲を小さくすることが有効である。","tags":"体軸方向;部分容積効果;薄いスライス"},{"id":"RP-35","category":"画像再構成と画像処理","subcategory":"ビームハードニング","question":"ビームハードニングが生じる主な機序はどれか。","choices":{"a":"高エネルギー光子が優先的に吸収される","b":"全エネルギー光子が同じ割合で吸収される","c":"低エネルギー光子が優先的に吸収される","d":"散乱光子だけが検出器へ優先的に到達する"},"answer":"c","explanation":"連続X線が被写体を透過する際、比較的エネルギーの低い（軟らかい）X線成分が優先的に吸収され、透過後のX線の平均エネルギーが高くなる（硬くなる）ため発生する。","tags":"ビームハードニング;低エネルギー光子;優先吸収"},{"id":"RP-36","category":"画像再構成と画像処理","subcategory":"ビームハードニング","question":"ビームハードニングによるカッピングや暗帯を軽減する方法はどれか。","choices":{"a":"表示画像を左右反転してから保存する","b":"画像番号を撮影時刻順に並べ替える","c":"再構成画像の色相だけを均一化する","d":"物質特性を考慮した補正処理を適用する"},"answer":"d","explanation":"ビームハードニングによるアーチファクト（カッピングアーチファクトや暗帯など）を軽減するためには、あらかじめ物質のX線吸収特性を考慮したソフトウェア的な補正処理を行う。","tags":"ビームハードニング;カッピング;補正処理"},{"id":"RP-37","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"金属アーチファクトの発生に強く関係する現象はどれか。","choices":{"a":"ビームハードニングと光子不足が生じる","b":"表示階調の反転と画像拡大が生じる","c":"再構成間隔の重複と画像補間が生じる","d":"寝台停止と管球冷却が同時に生じる"},"answer":"a","explanation":"金属アーチファクトは、金属による極端なX線の強烈なビームハードニングや、検出器にほとんどX線が届かなくなることによる光子不足（量子ノイズの増大）などが主な原因で発生する。","tags":"金属アーチファクト;ビームハードニング;光子不足"},{"id":"RP-38","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"専用の金属アーチファクト低減再構成で行われる代表的な処理はどれか。","choices":{"a":"金属周囲の表示階調だけを反転処理する","b":"金属に対応する異常投影を補間処理する","c":"金属周囲の画素寸法だけを拡大処理する","d":"金属に対応する画像番号を削除処理する"},"answer":"b","explanation":"金属アーチファクト低減処理（MARなど）では、投影データ（サイノグラム）上で金属によって著しく欠損・異常値となった部分を周辺データから推定・補間して修復する。","tags":"金属アーチファクト低減;MAR;投影データ補間"},{"id":"RP-39","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"撮影中の患者の動きによって生じやすいアーチファクトはどれか。","choices":{"a":"画像中心を基準とする均一な拡大像","b":"検出器配列に一致する同心円状の像","c":"輪郭のずれや対象から伸びる帯状の像","d":"撮影範囲全体に生じる均一なCT値上昇"},"answer":"c","explanation":"撮影中に患者が体動や呼吸などにより動いた場合、投影データ間の整合性が崩れるため、画像の輪郭の二重化や、対象から周囲へ伸びる帯状のモーションアーチファクトが生じる。","tags":"体動アーチファクト;動き;帯状の像"},{"id":"RP-40","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"リングアーチファクトの代表的な原因はどれか。","choices":{"a":"患者の呼吸による周期的な位置変化","b":"寝台移動による周期的な速度変化","c":"造影剤注入による周期的な濃度変化","d":"検出器素子による持続的な感度異常"},"answer":"d","explanation":"リングアーチファクトは、特定の検出器素子に経時的な感度不良や校正のずれが生じることで、回転軸を中心とした同心円状（リング状）の偽像として画像に現れる。","tags":"リングアーチファクト;検出器素子;感度異常"},{"id":"RP-41","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"光子不足アーチファクトが発生しやすい状況はどれか。","choices":{"a":"高吸収部位を通過した光子が著しく減少する","b":"低吸収部位を通過した光子が著しく増加する","c":"表示範囲を変更した画素が著しく拡大する","d":"再構成間隔を重ねた画像が著しく増加する"},"answer":"a","explanation":"肩関節周辺や骨盤部などの非常にX線吸収が大きい（高吸収な）部位をX線が通過する際、検出器に到達する光子数が極端に減少することで光子不足アーチファクト（ストリーク）が発生する。","tags":"光子不足アーチファクト;高吸収部位;光子減少"},{"id":"RP-42","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"角度方向のエイリアシングが生じる主な原因はどれか。","choices":{"a":"投影方向の標本化数が過剰になる","b":"投影方向の標本化数が不足する","c":"表示画像の階調数が過剰になる","d":"表示画像の階調数が不足する"},"answer":"b","explanation":"角度方向のエイリアシング（サンプリング不足による偽像）は、ガントリー1回転あたりの投影方向のサンプリング数（標本化数）が不足している場合に発生し、微細なモアレ状の偽像となる。","tags":"エイリアシング;投影方向;標本化数不足"},{"id":"RP-43","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"トランケーションアーチファクトが生じる条件はどれか。","choices":{"a":"被写体が再構成関数の周波数範囲内に収まる","b":"被写体が検出器の時間分解能内に収まる","c":"被写体の一部が撮影視野の外側へはみ出す","d":"被写体の全体が表示視野の中心部に収まる"},"answer":"c","explanation":"トランケーションアーチファクトは、被写体の一部（体の一部や腕など）がスキャンFOV（検出器の測定範囲）の外側にはみ出してしまい、周辺の投影データが欠損することによって生じる。","tags":"トランケーションアーチファクト;視野外れ;データ欠損"},{"id":"RP-44","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"マルチスライスCTのコーンビームアーチファクトに関係する要因はどれか。","choices":{"a":"表示視野の拡大による画素数の増加","b":"再構成関数の変更による色相の変化","c":"画像保存形式の変更による階調の減少","d":"体軸方向のビーム角度による投影の不一致"},"answer":"d","explanation":"マルチスライスCTで検出器列数が多くなると、X線が扇状（ファンビーム）から円錐状（コーンビーム）に広がり、周辺部で体軸方向の傾きによる投影データの不一致が生じてコーンビームアーチファクトが発生する。","tags":"コーンビームアーチファクト;マルチスライス;ビーム角度"},{"id":"RP-45","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"ヘリカルマルチスライスCTのウインドミルアーチファクトの特徴はどれか。","choices":{"a":"高吸収体の周囲に回転する羽根状の偽像が現れる","b":"低吸収体の内部に同心円状の偽像が現れる","c":"撮影視野の外側に均一な帯状の偽像が現れる","d":"画像全体に一定方向の位置ずれだけが現れる"},"answer":"a","explanation":"ウインドミルアーチファクト（風車状アーチファクト）は、ヘリカルマルチスライスCTにおいて、高吸収体（骨など）の周囲に風車の羽根のような放射状の偽像として現れる特徴がある。","tags":"ウインドミルアーチファクト;ヘリカル;羽根状偽像"},{"id":"RP-46","category":"画像再構成と画像処理","subcategory":"アーチファクト","question":"3D画像やMPRで階段状アーチファクトが目立ちやすい条件はどれか。","choices":{"a":"薄いスライスを狭い間隔で再構成した場合","b":"厚いスライスを広い間隔で再構成した場合","c":"等方性ボクセルを重複間隔で重畳した場合","d":"高い面内分解能で拡大して再構成した場合"},"answer":"b","explanation":"3D画像やMPRにおいて、スライス厚が厚く、かつ再構成間隔（あるいはスライス間隔）が広い（粗い）場合に、断面のつなぎ目が目立つ階段状アーチファクト（ステップ・アーチファクト）が顕著になる。","tags":"階段状アーチファクト;厚いスライス;広い間隔"},{"id":"RP-47","category":"画像再構成と画像処理","subcategory":"ヘリカルスキャン","question":"ヘリカル撮影でピッチに起因するアーチファクトを軽減する方法はどれか。","choices":{"a":"ピッチを上げて体軸方向の標本化を粗くする","b":"ピッチを固定して表示ウィンドウだけを狭くする","c":"ピッチを下げて体軸方向の標本化を密にする","d":"ピッチを固定して画像表示方向だけを反転する"},"answer":"c","explanation":"ヘリカル撮影においてピッチに起因するアーチファクト（補間によるアーチファクト等）を軽減するには、ヘリカルピッチを小さく（下げて）設定し、体軸方向のサンプリングを密に行うことが有効である。","tags":"ヘリカルピッチ;アーチファクト軽減;サンプリング密"},{"id":"RP-48","category":"画像再構成と画像処理","subcategory":"画像処理","question":"時相間サブトラクション画像で位置ずれによる偽像を減らす処理はどれか。","choices":{"a":"時相ごとに異なる表示色を割り当てる","b":"時相ごとに異なる画像厚へ変換する","c":"時相間で異なる再構成関数を適用する","d":"時相間の解剖学的位置を画像登録する"},"answer":"d","explanation":"時相間サブトラクション（造影前後の差分など）において、患者の微小な動きによる位置ずれ偽像を減らすためには、画像間で解剖学的な位置を合わせる画像登録（レジストレーション）処理を行う。","tags":"サブトラクション;位置ずれ;画像登録"},{"id":"RP-49","category":"画像再構成と画像処理","subcategory":"ウィンドウ表示","question":"CT画像のウィンドウ幅を広くした場合の一般的な表示変化はどれか。","choices":{"a":"表示されるCT値範囲が広がりコントラストが低下する","b":"表示されるCT値範囲が狭まりコントラストが低下する","c":"表示されるCT値範囲が広がりコントラストが上昇する","d":"表示されるCT値範囲が狭まりコントラストが上昇する"},"answer":"a","explanation":"ウィンドウ幅（WW）を広くすると、一度に表示するCT値の範囲が広がるため、画像全体のコントラストが低下し、幅広い組織の濃淡がなだらかに表現される。","tags":"ウィンドウ幅広い;コントラスト低下;表示範囲"},{"id":"RP-50","category":"画像再構成と画像処理","subcategory":"ウィンドウ表示","question":"CT画像におけるウィンドウレベルの役割はどれか。","choices":{"a":"表示するCT値範囲の幅を決定する","b":"表示するCT値範囲の中心を決定する","c":"再構成するスライス厚を決定する","d":"収集する投影データ数を決定する"},"answer":"b","explanation":"ウィンドウレベル（WL）は、画像として表示するCT値の範囲における「中心（センター）のCT値」を決定する役割を持つ。","tags":"ウィンドウレベル;中心値;役割"},{"id":"QS-01","category":"画質の性能評価と撮影条件","subcategory":"画像ノイズ","question":"均一な水ファントム画像で、画像ノイズの大きさを定量評価する代表的な指標はどれか。","choices":{"a":"ROI内CT値の標準偏差","b":"ROI内CT値の平均値","c":"ROI内CT値の最大値","d":"ROI内CT値の中央値"},"answer":"a","explanation":"均一領域におけるCT値のばらつきは、画像ノイズの大きさを反映する。","tags":"ノイズ;標準偏差;水ファントム"},{"id":"QS-02","category":"画質の性能評価と撮影条件","subcategory":"画像ノイズ","question":"量子ノイズが支配的な条件で、他の条件を変えずにmAsを4倍にした。画像ノイズはおよそどうなるか。","choices":{"a":"約4分の1になる","b":"約2分の1になる","c":"約ルート2倍になる","d":"約2倍になる"},"answer":"b","explanation":"量子ノイズは光子数の平方根に反比例するため、mAsを4倍にするとノイズは約半分になる。","tags":"量子ノイズ;mAs;平方根"},{"id":"QS-03","category":"画質の性能評価と撮影条件","subcategory":"画像ノイズ","question":"他の撮影条件を一定として管電圧を上げた場合、画像ノイズに生じる一般的な変化はどれか。","choices":{"a":"光子エネルギーが低下し、ノイズは減少しやすい","b":"光子エネルギーが低下し、ノイズは増加しやすい","c":"光子エネルギーが上昇し、ノイズは減少しやすい","d":"光子エネルギーが上昇し、ノイズは増加しやすい"},"answer":"c","explanation":"管電圧の上昇によって透過光子数が増えやすい一方、被ばく線量や組織コントラストも変化する。","tags":"管電圧;光子エネルギー;ノイズ"},{"id":"QS-04","category":"画質の性能評価と撮影条件","subcategory":"ノイズパワースペクトル","question":"ノイズパワースペクトルが主に示す画像特性はどれか。","choices":{"a":"CT値の絶対精度と直線性","b":"断面内のCT値均一性","c":"実効スライス厚の広がり","d":"画像ノイズの周波数分布"},"answer":"d","explanation":"ノイズパワースペクトルはノイズ量だけでなく、粒状性や画像質感に関係する周波数特性を表す。","tags":"ノイズパワースペクトル;周波数分布;粒状性"},{"id":"QS-05","category":"画質の性能評価と撮影条件","subcategory":"均一性","question":"水ファントムを用いて断面内のCT値均一性を評価する方法はどれか。","choices":{"a":"中心部と周辺部の平均CT値を比較する","b":"中心部と周辺部のCT値標準偏差を加算する","c":"中心部と周辺部の最大CT値を比較する","d":"中心部と周辺部の画素数比率を計算する"},"answer":"a","explanation":"均一な物質では位置によらず同程度のCT値を示すことが望ましく、その差から均一性を評価する。","tags":"均一性;平均CT値;水ファントム"},{"id":"QS-06","category":"画質の性能評価と撮影条件","subcategory":"画像ノイズ","question":"水ファントム画像にノイズ測定用のROIを設定する方法として適切なのはどれか。","choices":{"a":"ファントム辺縁を含む位置に設定する","b":"均一部に同じ大きさで設定する","c":"高コントラスト境界上に設定する","d":"金属アーチファクト上に設定する"},"answer":"b","explanation":"境界やアーチファクトを避けてROI条件を統一することで、ノイズを再現性よく比較できる。","tags":"ROI設定;均一部;ノイズ測定"},{"id":"QS-07","category":"画質の性能評価と撮影条件","subcategory":"低コントラスト分解能","question":"CT画像における低コントラスト分解能の説明として適切なのはどれか。","choices":{"a":"大きなCT値差の微細構造を識別する能力","b":"移動する構造を短時間で識別する能力","c":"小さなCT値差の構造を識別する能力","d":"体軸方向の薄い構造を識別する能力"},"answer":"c","explanation":"低コントラスト分解能は対象の大きさ、画像ノイズ、線量および再構成法などに左右される。","tags":"低コントラスト分解能;CT値差;識別能力"},{"id":"QS-08","category":"画質の性能評価と撮影条件","subcategory":"コントラストノイズ比","question":"コントラストノイズ比を確実に高くする変化はどれか。","choices":{"a":"信号差が小さくなり、ノイズが増える状態","b":"信号差が小さくなり、ノイズが減る状態","c":"信号差が大きくなり、ノイズが増える状態","d":"信号差が大きくなり、ノイズが減る状態"},"answer":"d","explanation":"コントラストノイズ比は対象と背景の信号差が大きいほど、また画像ノイズが小さいほど高くなる。","tags":"コントラストノイズ比;CNR;信号差"},{"id":"QS-09","category":"画質の性能評価と撮影条件","subcategory":"低コントラスト分解能","question":"低コントラスト検出能ファントムを用いた評価内容として適切なのはどれか。","choices":{"a":"異なる径と濃度差の信号の視認性を調べる","b":"異なる径とCT値の材質の直線性を調べる","c":"異なる厚さと角度の板の寸法精度を調べる","d":"異なる位置と方向の線の歪み量を調べる"},"answer":"a","explanation":"低コントラスト検出能は、背景とのCT値差が小さい対象を大きさ別に識別できるか評価する。","tags":"低コントラスト検出能;視認性;ファントム"},{"id":"QS-10","category":"画質の性能評価と撮影条件","subcategory":"スライス厚","question":"他の条件を一定として再構成スライス厚を厚くした場合の一般的な変化はどれか。","choices":{"a":"部分容積効果が減り、体軸分解能が上がる","b":"部分容積効果が増え、体軸分解能が下がる","c":"部分容積効果が減り、時間分解能が下がる","d":"部分容積効果が増え、時間分解能が上がる"},"answer":"b","explanation":"厚いスライスでは体軸方向に異なる組織が同一ボクセルへ含まれやすいが、画像ノイズは減少しやすい。","tags":"スライス厚;部分容積効果;体軸分解能"},{"id":"QS-11","category":"画質の性能評価と撮影条件","subcategory":"MTF","question":"MTFが表す画像特性として適切なのはどれか。","choices":{"a":"低コントラスト信号の視認確率","b":"時間方向の応答再現特性","c":"空間周波数ごとの伝達特性","d":"CT値と線減弱係数の直線性"},"answer":"c","explanation":"MTFは細かさの異なる構造を画像としてどの程度再現できるかを周波数別に示す。","tags":"MTF;空間周波数;伝達特性"},{"id":"QS-12","category":"画質の性能評価と撮影条件","subcategory":"空間周波数","question":"高い空間周波数に対応する構造はどれか。","choices":{"a":"広い均一領域など、変化を含まない構造","b":"緩やかな濃度勾配など、長い間隔で変化する構造","c":"大きな一様物体など、位置だけが変化する構造","d":"細かい縞模様など、短い間隔で変化する構造"},"answer":"d","explanation":"空間周波数が高いほど、短い距離で繰り返される微細な構造に対応する。","tags":"空間周波数;高周波;微細構造"},{"id":"QS-13","category":"画質の性能評価と撮影条件","subcategory":"MTF","question":"MTF10パーセント周波数の一般的な解釈として適切なのはどれか。","choices":{"a":"限界に近い高コントラスト分解能の目安","b":"画像ノイズの標準偏差そのものの目安","c":"低コントラスト検出能の閾値そのものの目安","d":"時間分解能の最短収集時間そのものの目安"},"answer":"a","explanation":"MTF10パーセント周波数は高周波信号の伝達が低下する領域を示し、装置間や条件間の分解能比較に用いられる。","tags":"MTF10%;高コントラスト分解能;限界"},{"id":"QS-14","category":"画質の性能評価と撮影条件","subcategory":"MTF","question":"エッジ法によってMTFを求める基本的な処理はどれか。","choices":{"a":"ESFを積分してから平均CT値を求める","b":"ESFを微分してからフーリエ変換する","c":"ESFを平滑化してから標準偏差を求める","d":"ESFを二値化してから面積比率を求める"},"answer":"b","explanation":"エッジスプレッド関数を微分して線広がり関数を得た後、その周波数成分からMTFを求める。","tags":"エッジ法;ESF;微分;フーリエ変換"},{"id":"QS-15","category":"画質の性能評価と撮影条件","subcategory":"画素寸法","question":"同じ表示FOVで画像行列を512から1024へ変更した。画素寸法はおよそどうなるか。","choices":{"a":"画素寸法は約4分の1になる","b":"画素寸法は約ルート2分の1になる","c":"画素寸法は約2分の1になる","d":"画素寸法は約2倍になる"},"answer":"c","explanation":"表示FOVを行列数で割った値が画素寸法となるが、装置固有のぼけがあるため空間分解能が必ず2倍になるわけではない。","tags":"画素寸法;画像行列;FOV"},{"id":"QS-16","category":"画質の性能評価と撮影条件","subcategory":"再構成関数","question":"鮮鋭度を重視した再構成関数が画像へ与える一般的な影響はどれか。","choices":{"a":"高周波成分を抑え、ノイズを減らす","b":"高周波成分を抑え、ノイズを増やす","c":"高周波成分を強め、ノイズを減らす","d":"高周波成分を強め、ノイズを増やす"},"answer":"d","explanation":"高分解能の再構成関数は微細な輪郭を強調する一方、高周波ノイズも目立たせやすい。","tags":"再構成関数;高鮮鋭度;ノイズ増加"},{"id":"QS-17","category":"画質の性能評価と撮影条件","subcategory":"等方性ボクセル","question":"等方性ボクセルを用いる主な利点はどれか。","choices":{"a":"任意方向のMPRで構造形状を保ちやすい","b":"任意方向のMPRで画像ノイズが消失する","c":"任意方向のMPRで被ばく線量が低下する","d":"任意方向のMPRで被写体運動が停止する"},"answer":"a","explanation":"三方向の寸法がほぼ等しいボクセルでは、斜め方向や冠状断の再構成でも形状の歪みが生じにくい。","tags":"等方性ボクセル;MPR;形状保持"},{"id":"QS-18","category":"画質の性能評価と撮影条件","subcategory":"SSP","question":"スライス感度プロファイルであるSSPの説明として適切なのはどれか。","choices":{"a":"断面内の周波数応答を表す曲線","b":"体軸方向の感度分布を表す曲線","c":"時間方向の信号変化を表す曲線","d":"線量分布の半径変化を表す曲線"},"answer":"b","explanation":"SSPは微小物体などに対する体軸方向の応答を示し、実効スライス厚や体軸分解能の評価に用いられる。","tags":"SSP;スライス感度プロファイル;体軸方向"},{"id":"QS-19","category":"画質の性能評価と撮影条件","subcategory":"SSP","question":"SSPの半値全幅が示す代表的な量はどれか。","choices":{"a":"画像ノイズの代表的な振幅","b":"断面内MTFの代表的な周波数","c":"実効スライス厚の代表的な幅","d":"ガントリ回転の代表的な時間"},"answer":"c","explanation":"SSPの最大値に対する半分の高さで測った幅は、実際の体軸方向の感度幅を示す。","tags":"SSP;半値全幅;実効スライス厚"},{"id":"QS-20","category":"画質の性能評価と撮影条件","subcategory":"ヘリカルピッチ","question":"同じ検出器構成と再構成法で、ヘリカルピッチを過度に上げた場合の一般的な傾向はどれか。","choices":{"a":"SSPが狭くなり、体軸分解能が向上しやすい","b":"SSPが狭くなり、体軸分解能が低下しやすい","c":"SSPが広がり、体軸分解能が向上しやすい","d":"SSPが広がり、体軸分解能が低下しやすい"},"answer":"d","explanation":"ピッチを上げると体軸方向のデータ間隔が広がるため、再構成法による程度の差はあるが実効スライス厚が増大しやすい。","tags":"ヘリカルピッチ;SSP;体軸分解能低下"},{"id":"QS-21","category":"画質の性能評価と撮影条件","subcategory":"コリメーション","question":"収集時の検出器コリメーションを狭くする主な利点はどれか。","choices":{"a":"体軸方向のサンプリングを細かくできる","b":"断面内の表示画素を自動的に大きくできる","c":"ガントリ回転時間を自動的に短くできる","d":"造影剤濃度を自動的に高くできる"},"answer":"a","explanation":"薄い検出器構成は微細な体軸情報を得やすいが、画像ノイズや線量効率にも配慮が必要となる。","tags":"コリメーション;サンプリング;体軸方向"},{"id":"QS-22","category":"画質の性能評価と撮影条件","subcategory":"MPR","question":"高品質な冠状断MPRを作成するための原画像条件として適切なのはどれか。","choices":{"a":"厚い原画像を広い間隔で再構成する","b":"薄い原画像を狭い間隔で再構成する","c":"厚い原画像を狭い間隔で再構成する","d":"薄い原画像を広い間隔で再構成する"},"answer":"b","explanation":"薄いスライスと十分な重なりは体軸方向の情報欠落や階段状の見え方を抑える。","tags":"MPR;冠状断;薄い原画像"},{"id":"QS-23","category":"画質の性能評価と撮影条件","subcategory":"時間分解能","question":"単一管球CTでハーフスキャン再構成を行う場合、時間分解能の目安はどれか。","choices":{"a":"回転時間のおよそ2倍","b":"回転時間とほぼ同じ","c":"回転時間のおよそ半分","d":"回転時間の約4分の1"},"answer":"c","explanation":"画像再構成にはおおむね半回転分の投影データが必要であり、厳密な値はファン角などの影響を受ける。","tags":"ハーフスキャン;時間分解能;回転時間"},{"id":"QS-24","category":"画質の性能評価と撮影条件","subcategory":"心臓CT","question":"心臓CTのマルチセグメント再構成による時間分解能の改善が強く影響を受ける要因はどれか。","choices":{"a":"被写体サイズの変化に強く依存する","b":"再構成FOVの変化に強く依存する","c":"表示階調の変化に強く依存する","d":"心拍周期の安定性に強く依存する"},"answer":"d","explanation":"複数心拍のデータを組み合わせるため、不整脈や心拍変動が大きいと時相のずれが生じやすい。","tags":"マルチセグメント;心拍周期;時間分解能"},{"id":"QS-25","category":"画質の性能評価と撮影条件","subcategory":"ヘリカルピッチ","question":"マルチスライスCTにおけるヘリカルピッチの定義はどれか。","choices":{"a":"1回転の寝台移動量を総コリメーション幅で割る","b":"1回転の照射時間を総コリメーション幅で割る","c":"1回転の管電流量を総コリメーション幅で割る","d":"1回転の画像枚数を総コリメーション幅で割る"},"answer":"a","explanation":"ピッチが大きいほど、同じ総コリメーション幅に対する1回転当たりの寝台移動量が大きい。","tags":"ヘリカルピッチ;寝台移動量;コリメーション幅"},{"id":"QS-26","category":"画質の性能評価と撮影条件","subcategory":"CTDIvol","question":"管電流、回転時間およびコリメーションを固定してヘリカルピッチを上げた場合の一般的な変化はどれか。","choices":{"a":"撮影範囲が狭まり、CTDIvolは増加する","b":"撮影速度が上がり、CTDIvolは低下する","c":"撮影速度が下がり、CTDIvolは増加する","d":"撮影範囲が広がり、CTDIvolは不変となる"},"answer":"b","explanation":"固定条件ではCTDIvolはピッチにおおむね反比例するが、自動管電流調整を使用すると管電流の変化によって相殺される場合がある。","tags":"ヘリカルピッチ;CTDIvol;撮影速度"},{"id":"QS-27","category":"画質の性能評価と撮影条件","subcategory":"管電流","question":"他の撮影条件を一定として管電流を増加させた場合の変化はどれか。","choices":{"a":"光子数が減り、ノイズと線量がともに下がる","b":"光子数が減り、ノイズと線量がともに上がる","c":"光子数が増え、ノイズが下がり線量が上がる","d":"光子数が増え、ノイズが上がり線量が下がる"},"answer":"c","explanation":"管電流の増加は量子ノイズを減らす一方、患者へ照射されるX線量を増加させる。","tags":"管電流;光子数;線量"},{"id":"QS-28","category":"画質の性能評価と撮影条件","subcategory":"管電流変調","question":"CTの管電流変調機構が行う基本的な制御はどれか。","choices":{"a":"全投影で管電流を一定に固定する","b":"全投影で管電圧を一定に固定する","c":"被写体厚に応じて回転時間を変える","d":"被写体減弱に応じて管電流を変える"},"answer":"d","explanation":"体軸方向や回転方向の減弱に合わせて管電流を調整し、必要な画質を保ちながら不要な線量を抑える。","tags":"管電流変調;被写体減弱;管電流制御"},{"id":"QS-29","category":"画質の性能評価と撮影条件","subcategory":"管電圧","question":"ヨード造影CTで管電圧を下げた場合に得られやすい効果はどれか。","choices":{"a":"ヨード造影のコントラストが上がりやすい","b":"ヨード造影のコントラストが下がりやすい","c":"体動による時間分解能が上がりやすい","d":"検出器による体軸分解能が上がりやすい"},"answer":"a","explanation":"低管電圧ではヨードのCT値が上昇しやすいが、大きな患者では透過不足やノイズ増加に注意する。","tags":"低管電圧;ヨード造影;コントラスト"},{"id":"QS-30","category":"画質の性能評価と撮影条件","subcategory":"逐次近似再構成","question":"逐次近似再構成法の基本的な特徴はどれか。","choices":{"a":"投影データを使わず表示画像だけを補間する","b":"統計特性などを利用して反復的に画像を求める","c":"周波数成分を使わず単純平均だけで画像を求める","d":"心電図情報だけを利用して時相画像を求める"},"answer":"b","explanation":"投影データや画像形成モデルを利用して更新を繰り返し、ノイズや一部のアーチファクトを抑制する。","tags":"逐次近似再構成;統計特性;反復処理"},{"id":"QS-31","category":"画質の性能評価と撮影条件","subcategory":"FBP","question":"フィルタ補正逆投影法であるFBPの説明として適切なのはどれか。","choices":{"a":"反復回数を増やして解を更新する再構成法","b":"深層学習だけで投影を生成する再構成法","c":"フィルタ処理後の投影を逆投影する再構成法","d":"複数心拍の投影だけを結合する再構成法"},"answer":"c","explanation":"FBPは高速で予測しやすい再構成法であるが、低線量条件では画像ノイズが目立ちやすい。","tags":"FBP;フィルタ補正逆投影法;投影"},{"id":"QS-32","category":"画質の性能評価と撮影条件","subcategory":"アーチファクト","question":"水ファントムの中心部が周辺部より低いCT値を示す現象はどれか。","choices":{"a":"同心円状に見えるリングアーチファクト","b":"階段状に見えるステップアーチファクト","c":"放射状に見える風車アーチファクト","d":"中心陥凹に見えるカッピングアーチファクト"},"answer":"d","explanation":"ビームハードニングや散乱線などにより、均一物体の中央部が周辺部より低いCT値として描出される。","tags":"カッピングアーチファクト;中心陥凹;ビームハードニング"},{"id":"QS-33","category":"画質の性能評価と撮影条件","subcategory":"CT値","question":"適切に校正されたCT装置で水ファントムを撮影した場合、平均CT値の目安はどれか。","choices":{"a":"水領域の平均CT値は0 HU付近を示す","b":"水領域の平均CT値は-1000 HU付近を示す","c":"水領域の平均CT値は1000 HU付近を示す","d":"水領域の平均CT値は3000 HU付近を示す"},"answer":"a","explanation":"CT値は水を0 HU、空気をおよそ-1000 HUとする尺度であり、水の測定値は校正精度の確認にも用いられる。","tags":"CT値;水ファントム;0 HU"},{"id":"QS-34","category":"画質の性能評価と撮影条件","subcategory":"スライス厚測定","question":"傾斜板であるランプを用いたスライス厚測定の考え方はどれか。","choices":{"a":"ランプ像の平均CT値だけから厚さを求める","b":"ランプ像の幅と傾斜角から厚さを求める","c":"ランプ像の標準偏差だけから厚さを求める","d":"ランプ像の画素数と線量から厚さを求める"},"answer":"b","explanation":"画像上に現れる傾斜板の幅を、その既知の角度で補正して実効スライス厚を求める。","tags":"スライス厚測定;傾斜板;ランプ"},{"id":"QS-35","category":"画質の性能評価と撮影条件","subcategory":"実効スライス厚","question":"微小ビーズを用いて実効スライス厚を評価する方法はどれか。","choices":{"a":"ビーズ応答の断面内直径から厚さを求める","b":"ビーズ応答の平均CT値から厚さを求める","c":"ビーズ応答の体軸分布から厚さを求める","d":"ビーズ応答のCT値標準偏差から厚さを求める"},"answer":"c","explanation":"微小ビーズの体軸方向における信号変化からSSPを作成し、その半値全幅などを測定する。","tags":"実効スライス厚;微小ビーズ;体軸分布"},{"id":"QS-36","category":"画質の性能評価と撮影条件","subcategory":"再構成間隔","question":"再構成間隔をスライス厚より小さく設定した場合の主な効果はどれか。","choices":{"a":"各画像の実効スライス厚が必ず厚くなる","b":"各画像の実効スライス厚が必ず薄くなる","c":"元データの時間分解能が必ず向上する","d":"画像が重なりMPRの連続性が向上する"},"answer":"d","explanation":"重複再構成は体軸方向の表示間隔を細かくするが、各画像の実効スライス厚そのものを薄くする処理ではない。","tags":"再構成間隔;重複再構成;MPR"},{"id":"QS-37","category":"画質の性能評価と撮影条件","subcategory":"再構成関数","question":"再構成関数とMTFの関係として適切なのはどれか。","choices":{"a":"高分解能関数ではMTFが高周波側へ延びやすい","b":"平滑化関数ではMTFが高周波側へ延びやすい","c":"高分解能関数ではMTFが低周波側へ縮みやすい","d":"平滑化関数ではMTFが全周波数で一定になりやすい"},"answer":"a","explanation":"高分解能関数は微細構造の信号伝達を改善する一方、画像ノイズを増加させやすい。","tags":"再構成関数;MTF;高分解能"},{"id":"QS-38","category":"画質の性能評価と撮影条件","subcategory":"空間分解能","question":"画素寸法と実際の断面内空間分解能の関係として適切なのはどれか。","choices":{"a":"画素を小さくすればMTFは必ず無限に向上する","b":"画素を小さくしても他のぼけが上限を決める","c":"画素を大きくすれば標本化周波数は高くなる","d":"画素を大きくしても部分容積効果は消失する"},"answer":"b","explanation":"実際の分解能は画素寸法だけでなく、焦点、検出器、再構成関数および被写体運動などにも制限される。","tags":"画素寸法;空間分解能;ぼけ"},{"id":"QS-39","category":"画質の性能評価と撮影条件","subcategory":"ウィンドウ設定","question":"ウィンドウ設定が画像データそのものへ与える影響として適切なのはどれか。","choices":{"a":"ウィンドウ幅を狭めると収集線量が増える","b":"ウィンドウ幅を狭めると実測MTFが上がる","c":"ウィンドウ設定は表示階調を変えるだけである","d":"ウィンドウ設定は投影データの光子数を変える"},"answer":"c","explanation":"ウィンドウ幅とレベルは見かけのコントラストを変えるが、収集済みデータのノイズや物理的分解能は変化させない。","tags":"ウィンドウ設定;表示階調;コントラスト"},{"id":"QS-40","category":"画質の性能評価と撮影条件","subcategory":"低コントラスト検出能","question":"他の条件を一定として撮影線量を下げた場合、低コントラスト検出能に生じやすい変化はどれか。","choices":{"a":"線量を下げると光子数が増え検出能が上がる","b":"線量を下げると光子数が増え検出能が下がる","c":"線量を下げると光子数が減り検出能が上がる","d":"線量を下げると光子数が減り検出能が下がる"},"answer":"d","explanation":"光子数の減少によって量子ノイズが増え、背景とのCT値差が小さい対象を識別しにくくなる。","tags":"撮影線量;低コントラスト検出能;光子数"},{"id":"QS-41","category":"画質の性能評価と撮影条件","subcategory":"画素寸法","question":"画像行列を変えずに表示FOVを小さくした場合の変化はどれか。","choices":{"a":"同じ行列数なら画素寸法が小さくなる","b":"同じ行列数なら画素寸法が大きくなる","c":"同じ行列数なら回転時間が短くなる","d":"同じ行列数なら実効線量が必ず下がる"},"answer":"a","explanation":"小さな表示FOVは標本化間隔を細かくするが、収集線量や装置固有の空間分解能を直接改善するものではない。","tags":"表示FOV;画素寸法;画像行列"},{"id":"QS-42","category":"画質の性能評価と撮影条件","subcategory":"高コントラスト分解能","question":"高コントラスト分解能ファントムの線対パターンを用いた評価方法はどれか。","choices":{"a":"低濃度差の円柱を視認して評価する","b":"高濃度差の線対を分離して評価する","c":"均一領域の標準偏差を測定して評価する","d":"中心周辺の平均CT値差を測定して評価する"},"answer":"b","explanation":"識別できる最も細かな線対パターンを確認することで、高コントラスト空間分解能を視覚的に評価する。","tags":"高コントラスト分解能;線対パターン;評価方法"},{"id":"QS-43","category":"画質の性能評価と撮影条件","subcategory":"画像ノイズ","question":"撮影条件を一定として再構成スライス厚を薄くした場合、画像ノイズは一般にどうなるか。","choices":{"a":"各画像に寄与する光子数が増えノイズは減る","b":"各画像に寄与する光子数が増えノイズは増える","c":"各画像に寄与する光子数が減りノイズは増える","d":"各画像に寄与する光子数が減りノイズは減る"},"answer":"c","explanation":"薄いスライスは体軸分解能を高める一方、同一条件では各画像に利用される情報量が少なくなる。","tags":"スライス厚;画像ノイズ;光子数"},{"id":"QS-44","category":"画質の性能評価と撮影条件","subcategory":"時間分解能","question":"被写体の動きによるぼけを抑えるための撮影条件として適切なのはどれか。","choices":{"a":"回転時間を延ばし収集時間を長くする","b":"再構成FOVを広げ収集時間を長くする","c":"スライス厚を増やし収集時間を長くする","d":"回転時間を短縮し収集時間を短くする"},"answer":"d","explanation":"短い時間で必要な投影データを収集すると時間分解能が向上し、呼吸や拍動によるぼけを抑えやすい。","tags":"時間分解能;回転時間短縮;体動抑制"},{"id":"QS-45","category":"画質の性能評価と撮影条件","subcategory":"空間分解能","question":"X線管の焦点寸法が空間分解能へ与える影響として適切なのはどれか。","choices":{"a":"小焦点は幾何学的不鮮鋭を抑えやすい","b":"小焦点は量子ノイズを必ず消去しやすい","c":"大焦点は幾何学的不鮮鋭を抑えやすい","d":"大焦点は部分容積効果を必ず消去しやすい"},"answer":"a","explanation":"小焦点は微細構造の描出に有利であるが、使用できる管電流や連続負荷に制限を受けることがある。","tags":"焦点寸法;小焦点;幾何学的不鮮鋭"},{"id":"QS-46","category":"画質の性能評価と撮影条件","subcategory":"実効スライス厚","question":"公称スライス厚と実効スライス厚の関係として適切なのはどれか。","choices":{"a":"両者は装置や条件にかかわらず常に一致する","b":"実効厚はSSPなどを測定して確認する","c":"公称厚は画像ノイズだけから決定される","d":"実効厚は表示ウィンドウだけで決定される"},"answer":"b","explanation":"実効スライス厚は検出器構成、ピッチおよび再構成法などの影響を受け、公称値と異なる場合がある。","tags":"公称スライス厚;実効スライス厚;SSP"},{"id":"QS-47","category":"画質の性能評価と撮影条件","subcategory":"逐次近似再構成","question":"逐次近似再構成の強度を高くした場合に注意すべき画像特性はどれか。","choices":{"a":"ノイズが増え、画像の質感は変化しない","b":"ノイズが増え、空間分解能は必ず一定となる","c":"ノイズは減るが、画像の質感が変わりうる","d":"ノイズは減るが、CT値は必ずゼロとなる"},"answer":"c","explanation":"強いノイズ低減処理では平滑感や粒状性が変化するため、診断対象に応じた画質評価が必要となる。","tags":"逐次近似再構成;強度;質感変化"},{"id":"QS-48","category":"画質の性能評価と撮影条件","subcategory":"自動露出機構","question":"自動露出機構による撮影条件制御の目的として適切なのはどれか。","choices":{"a":"被写体減弱に応じ管電流を最低値へ固定する","b":"被写体減弱に応じ管電圧を最高値へ固定する","c":"被写体減弱に応じ画像枚数を一定値へ固定する","d":"被写体減弱に応じ目標画質へ出力を調整する"},"answer":"d","explanation":"自動露出機構は設定された画質指標や参照条件を基に出力を変えるため、患者体格や位置決めの影響も受ける。","tags":"自動露出機構;目標画質;出力調整"},{"id":"QS-49","category":"画質の性能評価と撮影条件","subcategory":"画質最適化","question":"画質と被ばく線量のトレードオフを考慮した撮影条件の最適化として適切なのはどれか。","choices":{"a":"診断目的と体格に合わせ画質と線量を調整する","b":"診断目的だけに合わせ線量を一律に最小化する","c":"患者体格だけに合わせ全条件を同一に固定する","d":"装置性能だけに合わせ管電流を最大に固定する"},"answer":"a","explanation":"必要な診断情報を保ちながら合理的に達成可能な範囲で線量を抑え、検査目的ごとに条件を設定する。","tags":"画質最適化;被ばく線量;診断目的"},{"id":"QS-50","category":"画質の性能評価と撮影条件","subcategory":"再構成関数","question":"低コントラスト病変の検出を重視する場合に一般に適した再構成関数の選択はどれか。","choices":{"a":"骨用の高鮮鋭再構成関数を選び、ノイズを強める","b":"軟部用の平滑再構成関数を選び、ノイズを抑える","c":"骨用の平滑再構成関数を選び、輪郭を強める","d":"軟部用の高鮮鋭再構成関数を選び、輪郭を強める"},"answer":"b","explanation":"平滑な再構成関数は微細な高コントラスト構造の鮮鋭度と引き換えに、低コントラスト信号の視認性を高めやすい。","tags":"再構成関数;平滑;低コントラスト病変"},{"id":"TE-01","category":"撮影技術と造影法","subcategory":"安全管理","question":"造影CT検査を開始する前の確認として最も適切なのはどれか。","choices":{"a":"患者識別、依頼内容、リスク情報を照合する","b":"撮影後に患者識別と依頼内容だけを確認する","c":"造影開始後に腎機能と副作用歴を確認する","d":"入室時は撮影範囲だけを患者に確認する"},"answer":"a","explanation":"造影CT検査前には、患者の本人確認、検査依頼内容、アレルギーや腎機能などのリスク情報の確認が必須である。","tags":"安全管理;確認事項"},{"id":"TE-02","category":"撮影技術と造影法","subcategory":"位置決め撮影","question":"CTの位置決め画像を撮影する主な目的はどれか。","choices":{"a":"本スキャン後に体動の有無だけを記録する","b":"本スキャン前に位置と撮影範囲を設定する","c":"造影剤注入後に副作用の重症度を判定する","d":"画像再構成後に病変の質的診断を確定する"},"answer":"b","explanation":"位置決め画像（スキャノグラムなど）は、本スキャンの撮影範囲や撮影位置を決定するために撮影される。","tags":"撮影準備;スキャノグラム"},{"id":"TE-03","category":"撮影技術と造影法","subcategory":"ポジショニング","question":"頭部CTで見かけ上の左右差を抑える基本的なポジショニングはどれか。","choices":{"a":"顎を強く上げて冠状縫合を寝台中心に置く","b":"頭部を傾けて外耳孔を左右別の高さに置く","c":"正中面を寝台中心に合わせ頭部回旋を避ける","d":"両肩を強く挙上して鎖骨上縁を寝台中心に合わせる"},"answer":"c","explanation":"頭部CTにおいて左右差（アーチファクトの原因となる回旋）を抑えるには、正中面を寝台中心に合わせ、頭部の回旋や傾きがないように固定する。","tags":"頭部CT;撮影姿勢"},{"id":"TE-04","category":"撮影技術と造影法","subcategory":"呼吸管理","question":"通常の胸部CTで肺野を十分に広げる呼吸停止法はどれか。","choices":{"a":"安静呼吸の呼気中に息を止めて撮影する","b":"最大呼気の直後に息を止めて撮影する","c":"浅い吸気の途中で息を止めて撮影する","d":"十分な吸気の状態で息を止めて撮影する"},"answer":"d","explanation":"胸部CTでは、肺野を十分に広げ、肺内の空気量を多くしてコントラストを良くするため、深吸気（十分な吸気）の状態での息止めが推奨される。","tags":"胸部CT;呼吸停止"},{"id":"TE-05","category":"撮影技術と造影法","subcategory":"ポジショニング","question":"通常の腹部CTで可能な場合に推奨される上肢の位置はどれか。","choices":{"a":"両上肢を頭側へ挙上し体幹から離して固定する","b":"両上肢を胸上で交差し照射野内に固定する","c":"片上肢だけを下垂し体幹の側面に固定する","d":"両上肢を腹上に置き腹壁へ密着させて固定する"},"answer":"a","explanation":"腹部CTでは、上肢を頭側に挙上することで、上肢によるアーチファクトを防ぎ、被ばく線量の増加や画像欠損を回避できる。","tags":"腹部CT;上肢の挙上"},{"id":"TE-06","category":"撮影技術と造影法","subcategory":"造影相の用途","question":"肝臓の造影CTにおける動脈相の主な用途はどれか。","choices":{"a":"腎盂尿管内の造影剤排泄状態の評価に適する","b":"多血性肝腫瘍の濃染の評価に適する","c":"大腸壁の遅延性増強の評価に適する","d":"膀胱内造影剤貯留の評価に適する"},"answer":"b","explanation":"肝動脈相（早期相）は、血液供給の大部分が肝動脈からくる肝細胞癌などの多血性肝腫瘍の濃染を評価するのに適している。","tags":"肝臓;動脈相"},{"id":"TE-07","category":"撮影技術と造影法","subcategory":"造影相の用途","question":"腹部造影CTの門脈相にみられる特徴はどれか。","choices":{"a":"腎盂尿管内の造影剤排泄が最大となる","b":"肺動脈内の造影剤濃度が最大となる","c":"門脈と肝実質が良好に増強されやすい","d":"冠動脈内の造影剤濃度が最大となる"},"answer":"c","explanation":"門脈相（平衡相に近いタイミング）では、門脈に造影剤が充満し、肝実質全体が造影剤により濃染される。","tags":"門脈相;肝実質"},{"id":"TE-08","category":"撮影技術と造影法","subcategory":"造影相の用途","question":"CT尿路造影の排泄相で主に観察する所見はどれか。","choices":{"a":"腎皮質の初期濃染を中心に観察する","b":"腎髄質の早期濃染を中心に観察する","c":"腹部大動脈の初回通過濃染を中心に観察する","d":"腎盂尿管への造影剤排泄を中心に観察する"},"answer":"d","explanation":"CT尿路造影の排泄相（遅延相）は、腎臓でろ過された造影剤が腎盂・尿管へ排泄される状態を観察するものである。","tags":"尿路造影;排泄相"},{"id":"TE-09","category":"撮影技術と造影法","subcategory":"撮影範囲","question":"通常の胸部CTで肺全体を含める頭尾方向の範囲はどれか。","choices":{"a":"肺尖部から肋骨横隔膜角までを含める","b":"舌骨上縁から胸骨上切痕までを含める","c":"腎上極から恥骨結合下縁までを含める","d":"眼窩上縁から大後頭孔下縁までを含める"},"answer":"a","explanation":"胸部CTの撮影範囲は、肺尖部から肋骨横隔膜角（肋横隔膜角）までである。","tags":"撮影範囲;胸部"},{"id":"TE-10","category":"撮影技術と造影法","subcategory":"撮影範囲","question":"頸部軟部組織を主対象とするCTの基本的な撮影範囲はどれか。","choices":{"a":"眼窩上縁から頭頂部までを含める","b":"頭蓋底から胸郭入口部までを含める","c":"横隔膜上縁から腎下極までを含める","d":"腸骨稜から大腿骨小転子までを含める"},"answer":"b","explanation":"頸部CTの撮影範囲は、頭蓋底（または上顎洞レベル）から胸郭入口部までが一般的である。","tags":"撮影範囲;頸部"},{"id":"TE-11","category":"撮影技術と造影法","subcategory":"撮影技術","question":"冠動脈CTで心電図同期を用いる主な目的はどれか。","choices":{"a":"呼吸性の肝移動を時間的に補正する","b":"腸管内の蠕動運動を時間的に補正する","c":"心拍に伴う冠動脈運動を時間的に補正する","d":"嚥下に伴う咽頭周囲の運動を時間的に補正する"},"answer":"c","explanation":"冠動脈は拍動しているため、心電図同期（ECG同期）を用いて心臓の動きの少ない相で画像データを取得・再構成する必要がある。","tags":"冠動脈CT;心電図同期"},{"id":"TE-12","category":"撮影技術と造影法","subcategory":"撮影技術","question":"患者をCT装置のガントリ中心に配置する主な技術的理由はどれか。","choices":{"a":"造影剤の腎排泄開始時間を一定に調整するため","b":"患者の心拍変動を一定範囲に調整するため","c":"呼吸停止の可能時間を長く維持するため","d":"自動線量調整と画質を適切に働かせるため"},"answer":"d","explanation":"ガントリ中心に患者を配置することで、自動線量調整（AEC）が正しく機能し、画質の均一性が保たれる。","tags":"AEC;撮影位置"},{"id":"TE-13","category":"撮影技術と造影法","subcategory":"撮影準備","question":"呼吸停止が必要なCTで撮影前に行う対応はどれか。","choices":{"a":"撮影前に練習し息止め可能時間を把握する","b":"造影剤注入の終了後に練習し息止め開始を遅らせる","c":"本撮影の進行中に練習し呼吸指示を初めて伝える","d":"退室直前に練習し画像再構成条件だけを決定する"},"answer":"a","explanation":"呼吸停止を必要とするCT検査では、安全かつ確実に撮影するために、撮影前に呼吸練習を行うことが極めて重要である。","tags":"呼吸練習;検査準備"},{"id":"TE-14","category":"撮影技術と造影法","subcategory":"安全管理","question":"CT撮影後に患者を寝台から降ろす前の確認として適切なのはどれか。","choices":{"a":"撮影後は原画像を確認せず直ちに退室させる","b":"退室前に範囲、体動、造影状態を確認する","c":"退室後に患者を呼び戻して位置決めを行う","d":"会計後に追加撮影の要否だけを判断する"},"answer":"b","explanation":"撮影終了後は、予定した撮影範囲が確保されているか、体動はないか、造影剤の効果は適切かなどを確認し、追加撮影が必要ないか判断してから退室させる。","tags":"確認事項;終了時"},{"id":"TE-15","category":"撮影技術と造影法","subcategory":"小児CT","question":"小児CTの撮影条件を設定する基本的な考え方はどれか。","choices":{"a":"成人条件を年齢に関係なく一律に使用する","b":"成人条件を体重に関係なく一律に使用する","c":"体格に応じて管電圧と管電流を調整する","d":"体格に応じず撮影相数だけを追加する"},"answer":"c","explanation":"小児CTでは被ばく低減のため、体格（体重や年齢）に合わせて管電圧や管電流を適切に調整する。","tags":"小児;撮影条件"},{"id":"TE-16","category":"撮影技術と造影法","subcategory":"小児CT","question":"小児腹部CTで被ばくを抑える撮影相の設定はどれか。","choices":{"a":"単純相と三つの造影相を標準化する","b":"単純相と二つの造影相を標準化する","c":"単純相と遅延相だけを標準化する","d":"必要な一相に絞り多相撮影を避ける"},"answer":"d","explanation":"小児では累積線量の低減が重要であり、多相撮影は避け、必要最小限の撮影相に絞ることが推奨される。","tags":"小児;多相撮影"},{"id":"TE-17","category":"撮影技術と造影法","subcategory":"小児CT","question":"鎮静下で小児CTを行う際の安全管理はどれか。","choices":{"a":"鎮静中は呼吸、酸素化、循環を監視する","b":"鎮静中は画像再構成条件だけを監視する","c":"鎮静中は造影剤濃度の変化だけを監視する","d":"鎮静中は検査室の温度変化だけを監視する"},"answer":"a","explanation":"鎮静（Sedation）下の検査では、呼吸抑制や循環不全のリスクがあるため、心電図、パルスオキシメーター等での監視が必要である。","tags":"小児;安全管理;鎮静"},{"id":"TE-18","category":"撮影技術と造影法","subcategory":"小児CT","question":"小児造影CTの造影剤投与量を設定する方法はどれか。","choices":{"a":"成人用の固定量をすべての小児へ同量投与する","b":"体重と検査目的を基に投与量を設定する","c":"年齢だけを基に注入速度を最大化する","d":"身長だけを基に造影相数を追加する"},"answer":"b","explanation":"小児の造影剤投与量は、体重を基にして計算する（体重あたりの用量）のが原則である。","tags":"小児;造影剤投与"},{"id":"TE-19","category":"撮影技術と造影法","subcategory":"デュアルエナジー","question":"デュアルエナジーCTのデータ取得に関する特徴はどれか。","choices":{"a":"同一管電圧で撮影時刻だけを二分する","b":"同一画像を再構成関数だけで二分する","c":"異なるエネルギー特性のデータを取得する","d":"異なる呼吸相のデータだけを連続取得する"},"answer":"c","explanation":"デュアルエナジーCTは、エネルギー特性（X線スペクトル）の異なる2種類のデータを取得する。","tags":"デュアルエナジー;スペクトル"},{"id":"TE-20","category":"撮影技術と造影法","subcategory":"デュアルエナジー","question":"デュアルエナジーCTの物質弁別に利用される性質はどれか。","choices":{"a":"物質ごとのX線照射後の温度変化差を利用する","b":"物質ごとの撮影後の位置移動速度差を利用する","c":"物質ごとの細胞外液内の拡散速度差を利用する","d":"物質ごとのエネルギー依存減弱差を利用する"},"answer":"d","explanation":"デュアルエナジーCTは、エネルギーレベルによって物質の減弱係数が異なる性質（エネルギー依存性）を利用して物質を弁別する。","tags":"デュアルエナジー;物質弁別"},{"id":"TE-21","category":"撮影技術と造影法","subcategory":"デュアルエナジー","question":"デュアルエナジーCTの仮想単純画像はどのように作成されるか。","choices":{"a":"造影画像からヨード成分を抑制して作成する","b":"単純画像から石灰化成分だけを選択強調して作成する","c":"動脈相から水成分だけを除去して作成する","d":"遅延相から脂肪成分だけを追加して作成する"},"answer":"a","explanation":"仮想単純画像は、造影データからヨードの寄与を差し引く（あるいは抑制する）ことで作成される。","tags":"デュアルエナジー;仮想単純"},{"id":"TE-22","category":"撮影技術と造影法","subcategory":"デュアルエナジー","question":"デュアルエナジーCTのヨードマップが示す情報はどれか。","choices":{"a":"脂肪量の空間分布を選択的に表示する","b":"ヨード量の空間分布を選択的に表示する","c":"骨髄量の空間分布を選択的に表示する","d":"空気量の空間分布を選択的に表示する"},"answer":"b","explanation":"ヨードマップは、ヨード造影剤が分布している場所と量を空間的に表示する画像である。","tags":"デュアルエナジー;ヨードマップ"},{"id":"TE-23","category":"撮影技術と造影法","subcategory":"デュアルエナジー","question":"高keVの仮想単色画像に期待される効果はどれか。","choices":{"a":"ヨード造影を強め血管濃度を上げやすい","b":"画像雑音を増やし低吸収域を強めやすい","c":"ビームハードニングを抑えやすい","d":"物質分解を無効化し石灰化を増やしやすい"},"answer":"c","explanation":"高keVの単色画像は、X線の透過性が高くなるため、金属などによるビームハードニングアーチファクトを低減する効果がある。","tags":"デュアルエナジー;単色画像"},{"id":"TE-24","category":"撮影技術と造影法","subcategory":"デュアルエナジー","question":"低keVの仮想単色画像にみられる一般的な特徴はどれか。","choices":{"a":"脂肪の信号を消し画像雑音も減らしやすい","b":"骨の信号を消し金属アーチファクトも減らしやすい","c":"空気の信号を消しビームハードニングも減らしやすい","d":"ヨード造影を強めるが画像雑音も増えやすい"},"answer":"d","explanation":"低keV画像はヨードの減弱係数が高くなるため血管のコントラストは向上するが、同時にノイズも増大する。","tags":"デュアルエナジー;単色画像"},{"id":"TE-25","category":"撮影技術と造影法","subcategory":"造影技術","question":"造影剤注入後に生理食塩液を後押し注入する主な目的はどれか。","choices":{"a":"チューブ内の残留造影剤を押し込み活用する","b":"血管内の造影剤を希釈し到達時間を一定にする","c":"腎臓内の造影剤を排出し副作用を完全に防ぐ","d":"組織内の造影剤を中和し浸透圧を一定にする"},"answer":"a","explanation":"生食（Saline flush）による後押し注入は、チューブ内に残った造影剤を末梢血管へ押し込み、造影効果を最大化する目的がある。","tags":"造影技術;生食後押し"},{"id":"TE-26","category":"撮影技術と造影法","subcategory":"造影技術","question":"造影剤の注入速度を変化させた場合に直接影響を受けやすいものはどれか。","choices":{"a":"造影剤の化学構造だけを変化させる","b":"血管内濃染のピーク形状に影響する","c":"患者の糸球体濾過量だけを増加させる","d":"画像再構成の行列数だけを変化させる"},"answer":"b","explanation":"注入速度を変えると、血管内の造影剤濃度変化のカーブ（ピークの高さや幅）が変化する。","tags":"造影技術;注入速度"},{"id":"TE-27","category":"撮影技術と造影法","subcategory":"造影技術","question":"ヨードデリバリーレートを決める組合せはどれか。","choices":{"a":"造影剤温度と撮影スライス厚の積","b":"造影剤容量と寝台移動速度の積","c":"ヨード濃度と造影剤注入速度の積","d":"ヨード総量と画像再構成時間の積"},"answer":"c","explanation":"ヨードデリバリーレート（IDR）は、ヨード濃度(mgI/mL)と注入速度(mL/sec)の積であり、血管内濃度に直接影響する指標である。","tags":"IDR;造影技術"},{"id":"TE-28","category":"撮影技術と造影法","subcategory":"造影技術","question":"ボーラストラッキング法で本撮影開始の基準となるものはどれか。","choices":{"a":"注入前に固定時間だけ待って開始する","b":"注入後に患者の全身的な熱感の強さだけで開始する","c":"注入中に心拍数の低下だけで開始する","d":"ROIのCT値が閾値に達してから開始する"},"answer":"d","explanation":"ボーラストラッキング法では、目的とする血管にROIを置き、CT値が設定した閾値（しきいち）に達したタイミングで自動的に撮影を開始する。","tags":"ボーラストラッキング;ROI"},{"id":"TE-29","category":"撮影技術と造影法","subcategory":"造影技術","question":"テストボーラス法の主な目的はどれか。","choices":{"a":"少量の試験注入で目的血管の到達時間を求める","b":"少量の試験注入で腎機能低下の有無を確定する","c":"少量の試験注入で過敏反応の有無を予測する","d":"少量の試験注入で血管外漏出量を定量する"},"answer":"a","explanation":"テストボーラス法は、少量の造影剤を試験注入し、目的の血管に到達するまでの時間を計測して、本撮影の最適なタイミングを決定する手法である。","tags":"テストボーラス;タイミング"},{"id":"TE-30","category":"撮影技術と造影法","subcategory":"造影技術","question":"造影CTの動脈相タイミングに影響する患者側と注入側の要因はどれか。","choices":{"a":"画像表示のウィンドウ幅とウィンドウ値","b":"注入持続時間と患者の循環動態","c":"再構成関数の種類と画像の行列数","d":"寝台の高さとガントリの開口径"},"answer":"b","explanation":"動脈相のタイミングは、患者の心拍出量や循環状態（患者要因）と、注入速度や容量（注入要因）に依存する。","tags":"タイミング;循環動態"},{"id":"TE-31","category":"撮影技術と造影法","subcategory":"造影剤薬理","question":"静脈内投与された非イオン性ヨード造影剤の分布として適切なのはどれか。","choices":{"a":"血管内に長時間とどまり赤血球内へ選択的に移行する","b":"細胞内へ移行し核酸内へ主に蓄積する","c":"血管外細胞外液へ分布し細胞内へ入りにくい","d":"脂肪細胞内へ移行し脂質内へ主に蓄積する"},"answer":"c","explanation":"非イオン性ヨード造影剤は、主に血管内および血管外の細胞外液に分布し、細胞内へはほとんど移行しない。","tags":"薬理;造影剤分布"},{"id":"TE-32","category":"撮影技術と造影法","subcategory":"造影剤薬理","question":"静脈内投与されたヨード造影剤の主な排泄経路はどれか。","choices":{"a":"胆汁中へ代謝されずに大部分が排泄される","b":"呼気中へ肺胞で気体化されて大部分が排泄される","c":"皮膚面へ発汗により大部分が排泄される","d":"腎臓で濾過され尿中へ大部分が排泄される"},"answer":"d","explanation":"静脈内投与された水溶性ヨード造影剤は、代謝を受けず、腎臓で糸球体濾過されてそのまま尿中に排泄される。","tags":"薬理;排泄"},{"id":"TE-33","category":"撮影技術と造影法","subcategory":"安全管理","question":"高速注入を行う末梢静脈路の選択として適切なのはどれか。","choices":{"a":"太い静脈を確保し肘窩付近を優先する","b":"細い静脈を選び手指末端だけを優先する","c":"動脈選び手関節内側だけを優先する","d":"浮腫部を選び足関節周囲だけを優先する"},"answer":"a","explanation":"高速注入（高圧注入）には、血管外漏出のリスクを最小限にするため、なるべく太い血管（肘窩など）を選択する。","tags":"安全管理;静脈路"},{"id":"TE-34","category":"撮影技術と造影法","subcategory":"安全管理","question":"自動注入前に静脈路の開通性を確認する方法はどれか。","choices":{"a":"高圧注入後に発赤だけを目視確認する","b":"生理食塩液で通液し腫脹や疼痛を確認する","c":"撮影終了後に逆血だけを一度確認する","d":"造影終了後に皮膚温だけを一度確認する"},"answer":"b","explanation":"自動注入機で造影剤を注入する前に、生理食塩液などを手押しで注入し、血管外への漏出（腫脹や疼痛）がないことを確認する。","tags":"安全管理;開通確認"},{"id":"TE-35","category":"撮影技術と造影法","subcategory":"安全管理","question":"ヨード造影剤を体温付近まで加温することで期待される変化はどれか。","choices":{"a":"浸透圧をゼロに近づけ注入圧を下げる","b":"ヨード濃度を低下させ注入圧を下げる","c":"粘稠度を低下させ注入圧を下げやすくする","d":"造影剤分子を細分化させ注入圧を下げやすくする"},"answer":"c","explanation":"ヨード造影剤を加温すると粘度（粘稠度）が低下するため、細い針からでも注入が容易になり、注入圧を下げることができる。","tags":"安全管理;加温"},{"id":"TE-36","category":"撮影技術と造影法","subcategory":"安全管理","question":"造影剤の血管外漏出が疑われた直後の対応はどれか。","choices":{"a":"撮影を続けながら注入速度だけを下げる","b":"注入を続けながら患肢を心臓より下げる","c":"注入を続けながら穿刺部を強く圧迫する","d":"注入を直ちに中止し局所を評価する"},"answer":"d","explanation":"血管外漏出が疑われた場合は、直ちに造影剤の注入を中止し、患部の状態を速やかに評価する。","tags":"安全管理;血管外漏出"},{"id":"TE-37","category":"撮影技術と造影法","subcategory":"安全管理","question":"造影剤の血管外漏出後に局所で評価すべき項目はどれか。","choices":{"a":"腫脹、疼痛、感覚、末梢循環を評価する","b":"心拍、呼吸、瞳孔、聴力だけを評価する","c":"発熱、咳嗽、腹鳴、排尿だけを評価する","d":"血糖、視力、味覚、身長だけを評価する"},"answer":"a","explanation":"血管外漏出時は、腫脹や疼痛の程度だけでなく、神経障害や循環障害を疑わせる感覚や末梢循環を評価する。","tags":"安全管理;血管外漏出評価"},{"id":"TE-38","category":"撮影技術と造影法","subcategory":"安全管理","question":"血管外漏出後に緊急の外科的評価を検討する判断として適切なのはどれか。","choices":{"a":"漏出量が少量なら重い症状でも不要とする","b":"増悪痛、感覚変化、灌流低下を重視する","c":"漏出量が一定量なら症状なしでも必須とする","d":"皮膚所見が軽快しても全例で必須とする"},"answer":"b","explanation":"漏出後に強い痛み、感覚変化、灌流低下（血流障害）がある場合は、コンパートメント症候群などの重症化を疑い緊急外科的対応を検討する。","tags":"安全管理;血管外漏出"},{"id":"TE-39","category":"撮影技術と造影法","subcategory":"副作用対応","question":"造影剤投与後に限局性で一過性のじんましんだけが生じた場合の対応はどれか。","choices":{"a":"直ちに胸骨圧迫を開始し全例へ挿管する","b":"直ちに透析を開始し全例へ利尿薬を投与する","c":"経過観察し必要なら抗ヒスタミン薬を用いる","d":"直ちに造影剤を再注入し全例で反応再現を確認する"},"answer":"c","explanation":"限局性の軽いじんましんの場合は、バイタルを確認しつつ経過観察し、症状に応じて抗ヒスタミン薬などの投与を考慮する。","tags":"副作用;じんましん"},{"id":"TE-40","category":"撮影技術と造影法","subcategory":"副作用対応","question":"ヨード造影剤による軽度の生理的反応に分類される症状はどれか。","choices":{"a":"限局性じんましんが短時間で出現する","b":"顔面浮腫と呼吸困難が同時に出現する","c":"喉頭浮腫と低酸素血症が同時に出現する","d":"一過性の熱感や軽い悪心が出現する"},"answer":"d","explanation":"造影剤注入中の一過性の熱感や軽い悪心は、比較的よくみられる軽度の生理的反応である。","tags":"副作用;生理的反応"},{"id":"TE-41","category":"撮影技術と造影法","subcategory":"副作用対応","question":"造影剤投与後のアナフィラキシーで第一選択となる薬剤はどれか。","choices":{"a":"アドレナリンを第一選択薬として用いる","b":"抗ヒスタミン薬を第一選択薬として用いる","c":"副腎皮質薬を第一選択薬として用いる","d":"気管支拡張薬を第一選択薬として用いる"},"answer":"a","explanation":"アナフィラキシーショックに対する第一選択薬はアドレナリン（エピネフリン）である。","tags":"副作用;アナフィラキシー"},{"id":"TE-42","category":"撮影技術と造影法","subcategory":"副作用対応","question":"造影剤投与後に嗄声、喘鳴、呼吸困難が生じた場合の初期対応はどれか。","choices":{"a":"患者を一人にして画像処理を優先する","b":"応援要請し酸素投与と気道評価を行う","c":"飲水させ歩行で症状消失を確認する","d":"造影剤を追加し反応の再現性を調べる"},"answer":"b","explanation":"嗄声や呼吸困難は気道閉塞を示唆する重篤な症状であり、直ちに応援を呼び、酸素投与および気道確保を開始する。","tags":"副作用;アナフィラキシー;呼吸"},{"id":"TE-43","category":"撮影技術と造影法","subcategory":"副作用対応","question":"造影剤反応による低血圧に対する初期の支持療法はどれか。","choices":{"a":"坐位にして輸液を止め脈拍だけをみる","b":"立位にして酸素を止め血圧だけをみる","c":"下肢挙上し酸素、急速輸液を開始する","d":"腹臥位にして保温を止め体温だけをみる"},"answer":"c","explanation":"造影剤ショックによる低血圧に対し、患者を仰臥位とし下肢を挙上させ、酸素投与と急速輸液を行う。","tags":"副作用;ショック;低血圧"},{"id":"TE-44","category":"撮影技術と造影法","subcategory":"副作用対応","question":"ヨード造影剤による遅発性反応として典型的なのはどれか。","choices":{"a":"注入中の血管痛が数秒以内に現れる","b":"撮影中の熱感が数分以内に現れる","c":"観察中の迷走神経反応が直後に現れる","d":"斑状丘疹状皮疹が数時間後に現れる"},"answer":"d","explanation":"遅発性反応は、造影剤投与後数時間から数日後に現れることがあり、典型的な症状として斑状丘疹状の皮疹が挙げられる。","tags":"副作用;遅発性"},{"id":"TE-45","category":"撮影技術と造影法","subcategory":"副作用対応","question":"ヨード造影剤によるアレルギー様反応の再発リスクを最も強く示す病歴はどれか。","choices":{"a":"同種造影剤によるアレルギー様反応歴","b":"単純CTによる一過性の閉所不安歴","c":"超音波検査による軽い圧迫痛の既往","d":"胸部撮影による軽い立ちくらみの既往"},"answer":"a","explanation":"過去に造影剤でアレルギー様反応（アナフィラキシー含む）を起こしたことがある患者は、再発リスクが非常に高い。","tags":"副作用;アレルギー;病歴"},{"id":"TE-46","category":"撮影技術と造影法","subcategory":"副作用対応","question":"甲殻類アレルギー歴がある患者のヨード造影CTに対する考え方はどれか。","choices":{"a":"ヨード造影剤の絶対禁忌として扱う","b":"他の食物アレルギーと同様に評価する","c":"造影剤との交差反応が必ずあると扱う","d":"重篤反応の最重要予測因子として扱う"},"answer":"b","explanation":"甲殻類アレルギーとヨードアレルギーとの直接的な関連性や交差反応は医学的に証明されておらず、他の食物アレルギーと同様のリスク評価を行う。","tags":"副作用;アレルギー"},{"id":"TE-47","category":"撮影技術と造影法","subcategory":"副作用対応","question":"気管支喘息とヨード造影剤反応との関係はどれか。","choices":{"a":"重篤反応を必ず起こす絶対禁忌である","b":"腎障害を必ず起こす絶対禁忌である","c":"アレルギー様反応リスクをやや高める","d":"血管外漏出を必ず起こす絶対禁忌である"},"answer":"c","explanation":"気管支喘息は、造影剤によるアナフィラキシーなどのアレルギー様反応のリスクを高める要因の一つである。","tags":"副作用;アレルギー;喘息"},{"id":"TE-48","category":"撮影技術と造影法","subcategory":"腎機能","question":"造影剤関連急性腎障害の概念として適切なのはどれか。","choices":{"a":"造影剤が単独原因と病理学的に証明された慢性腎障害を指す","b":"造影剤と無関係な慢性腎障害だけを指す","c":"造影剤投与前に改善した急性腎障害を指す","d":"造影後に生じた原因未確定の急性腎障害を指す"},"answer":"d","explanation":"造影剤関連急性腎障害（CI-AKI）は、他の原因を除外した上で、造影剤投与後に生じた原因不明の腎機能悪化を指す。","tags":"腎機能;造影剤腎症"},{"id":"TE-49","category":"撮影技術と造影法","subcategory":"腎機能","question":"急性腎障害などを有する高リスク患者で検討される予防策はどれか。","choices":{"a":"等張性輸液による適切な容量補充を行う","b":"N-アセチルシステインを全例へ投与する","c":"ループ利尿薬を全例へ追加投与する","d":"造影直後に予防透析を全例へ実施する"},"answer":"a","explanation":"高リスク患者における造影剤関連急性腎障害の予防には、造影前後の十分な等張性輸液による水分補給が最も重要である。","tags":"腎機能;予防策;輸液"},{"id":"TE-50","category":"撮影技術と造影法","subcategory":"腎機能","question":"メトホルミン服用患者で造影後の腎機能悪化に注意する主な理由はどれか。","choices":{"a":"メトホルミン自体が造影剤腎障害を起こすため","b":"急性腎障害時に乳酸アシドーシスが懸念されるため","c":"メトホルミンが造影剤濃度を上昇させ血管外漏出を必ず起こすため","d":"メトホルミンが尿中ヨードを結晶化させ尿路閉塞を必ず起こすため"},"answer":"b","explanation":"メトホルミン服用患者において、造影剤による急性腎障害が生じると、メトホルミンの排泄が滞り、致死的な乳酸アシドーシスを引き起こす可能性がある。","tags":"腎機能;メトホルミン;乳酸アシドーシス"},{"id":"ED-01","category":"被ばく管理と線量評価","subcategory":"CTDIvol","question":"CTDIvolの説明として適切なのはどれか。","choices":{"a":"患者臓器の実吸収線量を直接示している指標","b":"全身リスクを年齢別に換算した指標","c":"標準ファントムによる装置出力の指標","d":"撮影範囲を含む総線量を表している指標"},"answer":"c","explanation":"CTDIvolは標準ファントムによる装置出力の指標である。","tags":"被ばく;指標;装置出力"},{"id":"ED-02","category":"被ばく管理と線量評価","subcategory":"DLP","question":"DLPの定義として適切なのはどれか。","choices":{"a":"CTDIvolと撮影長の積である","b":"CTDIvolを撮影長で除した指標","c":"SSDEに患者体重を乗じた指標","d":"実効線量を臓器数で除した指標"},"answer":"a","explanation":"DLPはCTDIvolと撮影長の積で定義される。","tags":"被ばく;指標;撮影長"},{"id":"ED-03","category":"被ばく管理と線量評価","subcategory":"SSDE","question":"SSDEの特徴として適切なのはどれか。","choices":{"a":"標準体格の実効線量を年齢で補正した値","b":"臓器線量の合計を撮影長で補正した値","c":"装置出力を管電圧の比率で補正した値","d":"CTDIvolの患者サイズ補正値"},"answer":"d","explanation":"SSDEはCTDIvolの患者サイズ補正値である。","tags":"被ばく;指標;患者サイズ"},{"id":"ED-04","category":"被ばく管理と線量評価","subcategory":"実効線量","question":"実効線量の算出概念として適切なのはどれか。","choices":{"a":"各臓器の吸収線量を単純加算した量","b":"組織荷重係数を用いて合算した量","c":"CTDIvolを患者体重だけで補正した量","d":"DLPを全撮影時間で平均化した量"},"answer":"b","explanation":"実効線量は組織荷重係数を用いて各臓器の線量を合算した量である。","tags":"被ばく;指標;組織荷重係数"},{"id":"ED-05","category":"被ばく管理と線量評価","subcategory":"線量指標","question":"CTの線量指標と単位の組合せとして適切なのはどれか。","choices":{"a":"CTDIvolはmGy、DLPはmGy cm、実効線量はSv","b":"CTDIvolはmSv、DLPはmGy、実効線量はmGy cm","c":"CTDIvolはmGy cm、DLPはmSv、実効線量はmGy","d":"CTDIvolはmGy、DLPはmSv、実効線量はmGy cm"},"answer":"a","explanation":"CTDIvolはmGy、DLPはmGy cm、実効線量はSvである。","tags":"被ばく;指標;単位"},{"id":"ED-06","category":"被ばく管理と線量評価","subcategory":"撮影条件","question":"他の撮影条件と管電流時間積を一定にしてヘリカルピッチを上げた場合、CTDIvolはどうなるか。","choices":{"a":"撮影長に比例して増加する","b":"患者体重に比例して増加する","c":"ピッチに反比例して低下する","d":"スライス厚に反比例して低下する"},"answer":"c","explanation":"CTDIvolはピッチに反比例して低下する。","tags":"ヘリカルピッチ;線量;撮影条件"},{"id":"ED-07","category":"被ばく管理と線量評価","subcategory":"画像ノイズ","question":"X線量と画像ノイズの基本的な関係として適切なのはどれか。","choices":{"a":"X線量を増やすと量子ノイズも増加する","b":"X線量を増やすと量子ノイズは減少する","c":"X線量を変えても量子ノイズは一定である","d":"X線量を減らすと量子ノイズも減少する"},"answer":"b","explanation":"X線量を増やすと量子ノイズは減少する。","tags":"画像ノイズ;量子ノイズ;X線量"},{"id":"ED-08","category":"被ばく管理と線量評価","subcategory":"撮影条件","question":"同じ再構成法と画像ノイズを保ちながら再構成スライス厚を薄くする場合、一般に必要な対応はどれか。","choices":{"a":"管電流を下げて線量を少なくする","b":"撮影長を延ばして線量を多くする","c":"管電圧を下げて線量を少なくする","d":"管電流を上げて線量を多くする"},"answer":"d","explanation":"スライス厚を薄くするとノイズが増えるため、管電流を上げて線量を多くする。","tags":"再構成;スライス厚;線量"},{"id":"ED-09","category":"被ばく管理と線量評価","subcategory":"画質","question":"低コントラスト検出能を改善する要因として適切なのはどれか。","choices":{"a":"画像ノイズを増加させること","b":"部分体積効果を増加させること","c":"画像ノイズを低下させること","d":"ビームハードニングを増加させること"},"answer":"c","explanation":"画像ノイズを低下させると低コントラスト検出能が改善する。","tags":"画質;コントラスト;ノイズ"},{"id":"ED-10","category":"被ばく管理と線量評価","subcategory":"再構成法","question":"逐次近似再構成の線量管理上の利点として適切なのはどれか。","choices":{"a":"撮影範囲を延長して解剖情報を増やせる","b":"同等ノイズのまま線量を低減できる","c":"管電圧を固定して造影効果を一定にできる","d":"寝台速度を固定して撮影時間を短縮できる"},"answer":"b","explanation":"逐次近似再構成は同等ノイズのまま線量を低減できる。","tags":"逐次近似再構成;ノイズ;線量低減"},{"id":"ED-11","category":"被ばく管理と線量評価","subcategory":"造影CT","question":"造影CTで管電圧を下げる際の一般的な特徴として適切なのはどれか。","choices":{"a":"ヨード造影効果が高まりノイズに注意する","b":"ヨード造影効果が下がる一方でノイズに注意する","c":"ヨード造影効果が高まる一方で撮影長に注意する","d":"ヨード造影効果が下がる一方で撮影長に注意する"},"answer":"a","explanation":"管電圧を下げるとヨード造影効果が高まる一方、ノイズが増えるため注意が必要。","tags":"管電圧;ヨード造影;ノイズ"},{"id":"ED-12","category":"被ばく管理と線量評価","subcategory":"ヘリカルCT","question":"ヘリカルCTにおけるオーバーレンジングの説明として適切なのはどれか。","choices":{"a":"位置決め画像を予定範囲より長く撮ること","b":"検査目的を超えて多相撮影を追加すること","c":"再構成画像を予定範囲より厚く作ること","d":"補間用に予定範囲外まで照射すること"},"answer":"d","explanation":"オーバーレンジングは補間用に予定範囲外まで照射することである。","tags":"ヘリカル;照射;補間"},{"id":"ED-13","category":"被ばく管理と線量評価","subcategory":"撮影範囲","question":"不要な撮影範囲の拡大を防ぐ方法として適切なのはどれか。","choices":{"a":"再構成関数を検査目的ごとに選択する","b":"必要な解剖範囲だけを撮影する","c":"表示条件を検査目的ごとに選択する","d":"画像保存範囲を必要な時相に限定する"},"answer":"b","explanation":"必要な解剖範囲だけを撮影することが、不要な範囲の拡大を防ぐ。","tags":"撮影範囲;最適化;防護"},{"id":"ED-14","category":"被ばく管理と線量評価","subcategory":"撮影時相","question":"同じ部位で撮影時相を追加した場合の線量への影響として適切なのはどれか。","choices":{"a":"各時相のDLPが相殺され総DLPは低下する","b":"各時相のDLPが平均され総DLPは一定になる","c":"各時相のDLPが加算され総DLPは増加する","d":"各時相のDLPが除算され総DLPは低下する"},"answer":"c","explanation":"撮影時相を追加すると各時相のDLPが加算され総DLPは増加する。","tags":"時相;DLP;線量"},{"id":"ED-15","category":"被ばく管理と線量評価","subcategory":"AEC","question":"CTのAECの主な目的として適切なのはどれか。","choices":{"a":"撮影中の管電圧を常に一定値へ保つこと","b":"撮影中の寝台速度を常に一定値へ保つこと","c":"撮影中のスライス厚を体格別に変えること","d":"減弱に応じて管電流を調整すること"},"answer":"d","explanation":"AECは患者の減弱に応じて管電流を調整する。","tags":"AEC;管電流;線量"},{"id":"ED-16","category":"被ばく管理と線量評価","subcategory":"AEC","question":"CTの自動管電流変調に含まれる方式として適切なのはどれか。","choices":{"a":"体軸方向変調と回転角度方向変調","b":"管電圧方向変調と焦点寸法方向変調","c":"寝台方向変調と再構成関数方向変調","d":"撮影時相変調と表示条件方向変調"},"answer":"a","explanation":"自動管電流変調には体軸方向変調と回転角度方向変調がある。","tags":"AEC;変調;管電流"},{"id":"ED-17","category":"被ばく管理と線量評価","subcategory":"AEC","question":"AECを用いるCTで患者の中心位置合わせが重要な理由として適切なのはどれか。","choices":{"a":"寝台速度が中心位置だけで決定されるため","b":"再構成関数が中心位置だけで決定されるため","c":"見かけの体格と線量調整に影響するため","d":"造影剤濃度と注入速度に影響するため"},"answer":"c","explanation":"中心位置がずれると見かけの体格が変わり、線量調整に影響する。","tags":"AEC;位置合わせ;線量調整"},{"id":"ED-18","category":"被ばく管理と線量評価","subcategory":"撮影技術","question":"胸腹部CTで可能な患者の腕を挙上する主な利点として適切なのはどれか。","choices":{"a":"体幹の減弱とストリークを抑える","b":"体幹部の撮影長と撮影時相を減らせる","c":"体幹部の造影剤量と注入速度を減らせる","d":"体幹部のスライス厚と画像枚数を減らせる"},"answer":"a","explanation":"腕を挙上することで体幹の減弱とストリークを抑える。","tags":"撮影技術;腕挙上;アーチファクト"},{"id":"ED-19","category":"被ばく管理と線量評価","subcategory":"AEC","question":"多くのCT装置でAECが管電流計画に利用する情報として適切なのはどれか。","choices":{"a":"検査後に作成した冠状断画像の減弱情報","b":"撮影前に得た位置決め画像の減弱情報","c":"検査後に作成した線量報告書の統計情報","d":"撮影前に入力した造影剤量の投与情報"},"answer":"b","explanation":"AECは位置決め画像の減弱情報を利用して管電流を計画する。","tags":"AEC;位置決め;管電流"},{"id":"ED-20","category":"被ばく管理と線量評価","subcategory":"臓器線量","question":"臓器線量変調の説明として適切なのはどれか。","choices":{"a":"側面通過時の管電圧を上げて骨盤線量を増やす","b":"後面通過時の管電圧を下げて脊椎線量を増やす","c":"側面通過時の管電流を上げて皮膚線量を増やす","d":"前面側の管電流を抑え表在臓器線量を減らす"},"answer":"d","explanation":"臓器線量変調は前面側の管電流を抑え表在臓器線量を減らす方式である。","tags":"線量変調;臓器;線量"},{"id":"ED-21","category":"被ばく管理と線量評価","subcategory":"正当化","question":"AECを使用する場合の検査の正当化について適切なのはどれか。","choices":{"a":"AEC使用中も検査の正当化が必要である","b":"AECを使用すれば検査ごとの正当化は不要である","c":"AECを使用すれば依頼目的の確認は不要である","d":"AECを使用すれば代替検査の検討は不要である"},"answer":"a","explanation":"検査の正当化は装置の機能（AEC等）に関わらず必要である。","tags":"正当化;最適化;防護"},{"id":"ED-22","category":"被ばく管理と線量評価","subcategory":"AEC","question":"メーカーが異なるAECの画質設定値を扱う際に適切なのはどれか。","choices":{"a":"同じ数値なら同じCTDIvolになると判断する","b":"同じ数値なら同じ画像ノイズになると判断する","c":"同じ数値なら同じ管電流になると判断する","d":"定義を確認し単純な数値比較を避ける"},"answer":"d","explanation":"メーカーごとに定義が異なるため、単純な数値比較は避けるべきである。","tags":"AEC;画質設定;比較"},{"id":"ED-23","category":"被ばく管理と線量評価","subcategory":"小児CT","question":"小児CTのプロトコル設定として適切なのはどれか。","choices":{"a":"成人条件を年齢に関係なくそのまま用いる","b":"成人条件を撮影部位に関係なくそのまま用いる","c":"体格と診断目的に応じた条件を用いる","d":"体格と診断目的に関係なく条件を固定する"},"answer":"c","explanation":"小児CTは体格と診断目的に応じて条件を適正化すべきである。","tags":"小児;プロトコル;最適化"},{"id":"ED-24","category":"被ばく管理と線量評価","subcategory":"DRL","question":"診断参考レベルであるDRLの位置づけとして適切なのはどれか。","choices":{"a":"個々の患者に適用する厳格な線量限度である","b":"標準検査の線量最適化に使う指標である","c":"確定的影響を防ぐ個人別のしきい値である","d":"装置故障を判定する一律の許容誤差である"},"answer":"b","explanation":"DRLは線量最適化のための指標である。","tags":"DRL;指標;最適化"},{"id":"ED-25","category":"被ばく管理と線量評価","subcategory":"DRL","question":"国や地域のDRLを設定する基礎として適切なのはどれか。","choices":{"a":"一人の患者における最大線量の測定値","b":"一台の装置における最小線量の測定値","c":"一人の患者における臓器線量の計算値","d":"複数施設における代表線量値の分布"},"answer":"d","explanation":"DRLは複数施設における代表線量の分布から設定される。","tags":"DRL;設定;分布"},{"id":"ED-26","category":"被ばく管理と線量評価","subcategory":"DRL","question":"施設の代表的なCT線量がDRLを継続して上回る場合の対応として適切なのはどれか。","choices":{"a":"直ちに全患者の検査を一律に中止する","b":"原因を調査してプロトコルを最適化する","c":"全患者の線量をDRLと同じ値に固定する","d":"線量記録を削除して再集計を回避する"},"answer":"b","explanation":"DRLを上回る場合は原因調査とプロトコル最適化を行う。","tags":"DRL;対応;最適化"},{"id":"ED-27","category":"被ばく管理と線量評価","subcategory":"DRL","question":"施設の代表的なCT線量がDRLを下回る場合の解釈として適切なのはどれか。","choices":{"a":"診断に必要な画質も併せて確認する","b":"線量が低いほど常に検査品質は高い","c":"画質に関係なく線量をさらに半減する","d":"検査目的に関係なく条件を統一する"},"answer":"a","explanation":"DRLを下回る場合でも、診断に必要な画質が保たれているか確認する必要がある。","tags":"DRL;画質;評価"},{"id":"ED-28","category":"被ばく管理と線量評価","subcategory":"DRL","question":"2026年時点で日本のCT線量管理に用いる最新の全国DRLはどれか。","choices":{"a":"Japan DRLs 2015初版","b":"Japan DRLs 2020改訂版","c":"Japan DRLs 2025","d":"Japan DRLs 2030改訂版"},"answer":"c","explanation":"Japan DRLs 2025が現在使用される最新のDRLである。","tags":"DRL;最新;日本"},{"id":"ED-29","category":"被ばく管理と線量評価","subcategory":"DRL","question":"Japan DRLs 2025における成人の頭部単純ルーチンCTの組合せはどれか。","choices":{"a":"CTDIvol 57 mGy、DLP 1160 mGy cm","b":"CTDIvol 67 mGy、DLP 1260 mGy cm","c":"CTDIvol 77 mGy、DLP 1360 mGy cm","d":"CTDIvol 107 mGy、DLP 1460 mGy cm"},"answer":"b","explanation":"Japan DRLs 2025の頭部単純ルーチンCTの値はCTDIvol 67mGy、DLP 1260mGy cmである。","tags":"DRL;頭部;数値"},{"id":"ED-30","category":"被ばく管理と線量評価","subcategory":"正当化","question":"医療被ばくにおける検査の正当化として適切なのはどれか。","choices":{"a":"線量がゼロになる検査だけを実施すること","b":"装置の稼働率が上がる検査を実施すること","c":"依頼医が希望した検査を無条件で実施すること","d":"期待される医学的便益がリスクを上回ること"},"answer":"d","explanation":"便益がリスクを上回ることが検査正当化の条件である。","tags":"正当化;便益;リスク"},{"id":"ED-31","category":"被ばく管理と線量評価","subcategory":"最適化","question":"医療被ばくにおける防護の最適化として適切なのはどれか。","choices":{"a":"診断情報に関係なく最低線量を選ぶこと","b":"全患者に同一の撮影条件を適用すること","c":"必要画質を保って線量を抑えること","d":"線量に関係なく最高画質を常に選ぶこと"},"answer":"c","explanation":"必要画質を保ちつつ線量を最小限に抑えることが最適化である。","tags":"最適化;防護;画質"},{"id":"ED-32","category":"被ばく管理と線量評価","subcategory":"線量限度","question":"ICRPの考え方に基づく患者の医療被ばくへの線量限度の適用として適切なのはどれか。","choices":{"a":"患者に線量限度を適用せず最適化を重視する","b":"職業被ばくと同じ線量限度を患者にも一律適用する","c":"公衆被ばくと同じ線量限度を患者にも一律適用する","d":"年齢だけで決めた線量限度を患者ごとに一律適用する"},"answer":"a","explanation":"患者への医療被ばくには線量限度を適用せず、最適化を重視する。","tags":"線量限度;患者;最適化"},{"id":"ED-33","category":"被ばく管理と線量評価","subcategory":"放射線影響","question":"放射線の確率的影響の特徴として適切なのはどれか。","choices":{"a":"発生確率は一定で重症度だけが線量で増す","b":"しきい値を超えると重症度だけが線量で増す","c":"しきい値以下では発生確率が必ずゼロになる","d":"線量が増すと発生確率が高まると仮定する"},"answer":"d","explanation":"確率的影響は線量が増すと発生確率が高まると仮定される。","tags":"放射線影響;確率的影響;発生確率"},{"id":"ED-34","category":"被ばく管理と線量評価","subcategory":"放射線影響","question":"放射線の組織反応の特徴として適切なのはどれか。","choices":{"a":"一般にしきい値があり線量とともに重症度が増す","b":"一般にしきい値がなく線量とともに重症度が減る","c":"一般にしきい値があり線量とともに発生率が下がる","d":"一般にしきい値がなく線量とともに発生率が一定になる"},"answer":"a","explanation":"組織反応（確定的影響）はしきい値があり、重症度が増す。","tags":"放射線影響;組織反応;しきい値"},{"id":"ED-35","category":"被ばく管理と線量評価","subcategory":"放射線影響","question":"放射線誘発がんの時間的特徴として適切なのはどれか。","choices":{"a":"被ばく直後だけに発生して以後は生じない","b":"被ばくから発症まで潜伏期間が存在する","c":"被ばくした時点で必ず臨床症状が出現する","d":"被ばく後の一定時刻に全員で同時発症する"},"answer":"b","explanation":"放射線誘発がんには潜伏期間が存在する。","tags":"放射線影響;がん;潜伏期間"},{"id":"ED-36","category":"被ばく管理と線量評価","subcategory":"小児被ばく","question":"同程度のCT被ばくを受けた小児と成人の比較として適切なのはどれか。","choices":{"a":"小児は余命が短いため生涯リスクが低い","b":"小児は細胞分裂が少ないため影響を受けにくい","c":"小児は感受性と余命の点からリスクが高い","d":"小児は体格が小さいため臓器線量が常にゼロになる"},"answer":"c","explanation":"小児は感受性が高く余命も長いためリスクが高い。","tags":"小児;感受性;リスク"},{"id":"ED-37","category":"被ばく管理と線量評価","subcategory":"胎児被ばく","question":"胎児への放射線影響を評価する際の考え方として適切なのはどれか。","choices":{"a":"妊娠時期と胎児線量で評価する","b":"母体年齢だけを考慮して一律に評価する","c":"撮影装置の製造年だけで一律に評価する","d":"造影剤の注入速度だけで一律に評価する"},"answer":"a","explanation":"胎児影響は妊娠時期と胎児線量で評価する。","tags":"胎児;被ばく;影響評価"},{"id":"ED-38","category":"被ばく管理と線量評価","subcategory":"胎児被ばく","question":"妊娠の可能性がある患者にCTが検討される場合の対応として適切なのはどれか。","choices":{"a":"妊娠の可能性だけで必要な検査を永久に中止する","b":"妊娠の可能性を確認せず通常条件で検査を進める","c":"臨床的必要性を確認し代替法と条件を検討する","d":"胎児線量を確認せず患者に判断をすべて委ねる"},"answer":"c","explanation":"必要性を確認し代替法や条件の最適化を検討する。","tags":"胎児;妊娠;対応"},{"id":"ED-39","category":"被ばく管理と線量評価","subcategory":"放射線感受性","question":"細胞の放射線感受性に関する一般的な説明として適切なのはどれか。","choices":{"a":"分裂せず高度に分化した細胞ほど感受性が高い","b":"分裂頻度と分化度に関係なく感受性は同じである","c":"分裂頻度が低く高度に分化した細胞ほど感受性が高い","d":"分裂頻度が高く未分化な細胞ほど感受性が高い"},"answer":"d","explanation":"分裂頻度が高く未分化な細胞ほど感受性が高い。","tags":"感受性;細胞;放射線"},{"id":"ED-40","category":"被ばく管理と線量評価","subcategory":"線量評価","question":"CT検査の実効線量を患者個人のリスク説明に使う際の注意点として適切なのはどれか。","choices":{"a":"個人の臓器線量と発がん確率を正確に確定できる","b":"標準集団に基づく概算で個人差を十分に表さない","c":"CTDIvolと常に同じ数値になるため換算は不要である","d":"患者体格だけで決まり撮影部位による差は生じない"},"answer":"b","explanation":"実効線量は標準集団に基づく概算であり個人差を十分に表さない。","tags":"実効線量;リスク;説明"},{"id":"ED-41","category":"被ばく管理と線量評価","subcategory":"リスクコミュニケーション","question":"患者へのCT被ばくのリスクコミュニケーションとして適切なのはどれか。","choices":{"a":"便益を説明せず放射線リスクだけを強調する","b":"リスクを説明せず検査の便益だけを強調する","c":"便益とリスクを平易に伝え不確かさも示す","d":"専門用語だけを用いて数値の比較を避ける"},"answer":"c","explanation":"便益とリスクを平易に伝え、不確かさも伝えることが重要。","tags":"リスクコミュニケーション;便益;リスク"},{"id":"ED-42","category":"被ばく管理と線量評価","subcategory":"X線の性質","question":"CTで使用するX線の性質として適切なのはどれか。","choices":{"a":"電離作用を持たない機械的な縦波である","b":"物質を電離し得る電磁放射線である","c":"静磁場だけから成る非電離放射線である","d":"可聴域の周波数だけを持つ音波である"},"answer":"b","explanation":"X線は物質を電離し得る電磁放射線である。","tags":"X線;物理;電離"},{"id":"ED-43","category":"被ばく管理と線量評価","subcategory":"放射線防護","question":"CT室内にやむを得ず残るスタッフが受ける主な放射線の由来として適切なのはどれか。","choices":{"a":"患者や周囲の物質から生じる散乱線","b":"画像表示モニタから生じる一次X線","c":"造影剤自動注入器から生じる中性子線","d":"再構成計算装置から生じる電子線"},"answer":"a","explanation":"スタッフが受ける主な放射線は散乱線である。","tags":"防護;散乱線;スタッフ"},{"id":"ED-44","category":"被ばく管理と線量評価","subcategory":"放射線防護","question":"介助者がやむを得ずCT室内で患者を保持する場合の対応として適切なのはどれか。","choices":{"a":"照射野内に立ち患者と同じ部位を保持する","b":"防護具を使わず患者の近くで保持を続ける","c":"線源に近づきガントリへ体を密着させる","d":"照射野を避け距離と防護具を活用する"},"answer":"d","explanation":"照射野を避け、距離を保ち、防護具を使用する。","tags":"防護;介助者;保持"},{"id":"ED-45","category":"被ばく管理と線量評価","subcategory":"線量記録","question":"CT線量情報を系統的に保存する仕組みとして適切なのはどれか。","choices":{"a":"画像の表示条件だけを記録する検像票","b":"CTDIvolとDLPの線量記録","c":"造影剤の商品名だけを記録する注射票","d":"患者の会計情報だけを記録する請求票"},"answer":"b","explanation":"CTDIvolとDLPの線量記録を行うべきである。","tags":"記録;線量;保存"},{"id":"ED-46","category":"被ばく管理と線量評価","subcategory":"防護","question":"不要な再撮影による被ばくを防ぐ取り組みとして適切なのはどれか。","choices":{"a":"撮影前に患者確認とプロトコル確認を行う","b":"撮影後に撮影範囲を毎回追加して確認する","c":"撮影前に過去画像を見ず同じ検査を繰り返す","d":"撮影後に理由を問わず全時相を再撮影する"},"answer":"a","explanation":"事前確認を行うことで不要な再撮影を防ぐ。","tags":"再撮影;防護;確認"},{"id":"ED-47","category":"被ばく管理と線量評価","subcategory":"計算","question":"CTDIvolが10 mGy、撮影長が30 cmのとき、DLPはいくらか。","choices":{"a":"30 mGy cm","b":"100 mGy cm","c":"1000 mGy cm","d":"300 mGy cm"},"answer":"d","explanation":"DLP = CTDIvol × 撮影長 = 10 mGy × 30 cm = 300 mGy cm","tags":"計算;DLP;CTDIvol"},{"id":"ED-48","category":"被ばく管理と線量評価","subcategory":"計算","question":"DLPが500 mGy cm、換算係数が0.02 mSv/(mGy cm)のとき、概算実効線量はいくらか。","choices":{"a":"2.5 mSv","b":"5 mSv","c":"10 mSv","d":"20 mSv"},"answer":"c","explanation":"実効線量 = DLP × 換算係数 = 500 × 0.02 = 10 mSv","tags":"計算;実効線量;DLP"},{"id":"ED-49","category":"被ばく管理と線量評価","subcategory":"SSDE","question":"同じCTDIvolで体格だけが異なる体幹部CTのSSDEについて、一般的に適切なのはどれか。","choices":{"a":"小さい患者ではCTDIvolを上回りやすい","b":"小さい患者では必ずCTDIvolと等しくなる","c":"大きい患者ではCTDIvolより大きくなりやすい","d":"大きい患者では必ずCTDIvolと等しくなる"},"answer":"a","explanation":"体格が小さい患者では、減弱が少なくてもSSDEはCTDIvolを上回る傾向がある。","tags":"SSDE;体格;線量"},{"id":"ED-50","category":"被ばく管理と線量評価","subcategory":"監査","question":"施設で行うCT線量監査として適切なのはどれか。","choices":{"a":"全検査の最大値だけを装置間で比較する","b":"検査別線量をDRLと画質で評価する","c":"患者一人の最小値だけを全国値と比較する","d":"装置の管電圧だけを患者体格と比較する"},"answer":"b","explanation":"線量監査は検査別の線量をDRLや画質とともに評価する。","tags":"監査;DRL;評価"}]</script>
 <script>
-/* =========================================================
-   データ（CSVから埋め込み）
-========================================================= */
-const QUESTIONS = [
-{"id":"CB-01","category":"CT装置の構成と基礎","subcategory":"X線管の熱容量","question":"X線管の熱容量について正しいのはどれか。","choices":{"a":"陽極熱容量は管電圧×管電流×露光時間で表される。","b":"陽極熱容量が小さいほど，連続撮影に適している。","c":"陽極熱容量が大きいほど，短時間で高出力の撮影が可能である。","d":"陽極熱容量は陽極の材質に依存しない。","e":"陽極熱容量は管電流の二乗に比例する。"},"correct":"c","explanation":"","tags":"陽極熱容量;熱特性;X線出力"},
-{"id":"CB-02","category":"CT装置の構成と基礎","subcategory":"検出器の特性","question":"CT検出器の特性として正しいのはどれか。","choices":{"a":"検出効率が高いほど，線量利用効率が低い。","b":"応答速度が速いほど，高速回転撮影に適している。","c":"残光が長いほど，画質が向上する。","d":"検出器素子間隔が広いほど，空間分解能が高い。","e":"幾何学的効率は，検出器の配置には依存しない。"},"correct":"b","explanation":"","tags":"検出効率;検出器;応答速度"},
-{"id":"CB-03","category":"CT装置の構成と基礎","subcategory":"コリメータの役割","question":"CT装置におけるコリメータの役割はどれか。","choices":{"a":"X線管の焦点サイズの変更","b":"被写体の散乱線の除去","c":"検出器の温度調節","d":"管電圧の安定化","e":"再構成アルゴリズムの選択"},"correct":"b","explanation":"","tags":"散乱線除去;コリメータ;画質"},
-{"id":"CB-04","category":"CT装置の構成と基礎","subcategory":"画像再構成","question":"CTの逐次近似再構成について正しいのはどれか。","choices":{"a":"計算時間がフィルタ補正逆投影法よりも短い。","b":"統計的ノイズモデルを考慮できない。","c":"アーチファクトの低減に有効である。","d":"空間分解能の向上は期待できない。","e":"投影データを使用しない。"},"correct":"c","explanation":"","tags":"逐次近似再構成;アーチファクト;画質"},
-{"id":"CB-05","category":"CT装置の構成と基礎","subcategory":"ヘリカルスキャン","question":"ヘリカルスキャンのピッチ係数について正しいのはどれか。","choices":{"a":"ピッチ係数が1より大きいと，スライス厚が薄くなる。","b":"ピッチ係数が小さいほど，被ばく線量が低減する。","c":"ピッチ係数はテーブル移動量／ビーム幅で定義される。","d":"ピッチ係数が大きいほど，画像コントラストが向上する。","e":"ピッチ係数は0に設定できる。"},"correct":"c","explanation":"","tags":"ピッチ係数;被ばく低減;ヘリカルスキャン"},
-{"id":"CB-06","category":"CT装置の構成と基礎","subcategory":"再構成パラメータ","question":"再構成関数（カーネル）の選択で正しい組み合わせはどれか。","choices":{"a":"骨評価には，高周波強調カーネルを用いる。","b":"軟部組織には，高周波強調カーネルを用いる。","c":"高コントラスト分解能が必要な場合は，平滑化カーネルを用いる。","d":"低コントラスト分解能が必要な場合は，高周波強調カーネルを用いる。","e":"再構成関数は画質に影響しない。"},"correct":"a","explanation":"","tags":"再構成関数;カーネル;空間分解能"},
-{"id":"CB-07","category":"CT装置の構成と基礎","subcategory":"アーチファクト","question":"金属アーチファクトの原因として正しいのはどれか。","choices":{"a":"ビームハードニング","b":"部分体積効果","c":"エイリアシング","d":"モーション","e":"リングアーチファクト"},"correct":"a","explanation":"","tags":"金属アーチファクト;ビームハードニング;画像品質"},
-{"id":"CB-08","category":"CT装置の構成と基礎","subcategory":"被ばく管理","question":"CTDIvolについて正しいのはどれか。","choices":{"a":"スキャン条件が変わっても一定である。","b":"加重CTDI（CTDIw）をピッチで除した値である。","c":"患者の体型に依存しない。","d":"被写体の吸収線量の指標である。","e":"撮影範囲の全線量を示す。"},"correct":"b","explanation":"","tags":"CTDIvol;線量評価;被ばく管理"},
-{"id":"CB-09","category":"CT装置の構成と基礎","subcategory":"画質の性能評価","question":"CTの空間分解能を評価する指標はどれか。","choices":{"a":"CT値の精度","b":"MTF（変調伝達関数）","c":"コントラスト対ノイズ比（CNR）","d":"SD値（標準偏差）","e":"信号対雑音比（SNR）"},"correct":"b","explanation":"","tags":"MTF;空間分解能;画質評価"},
-{"id":"CB-10","category":"CT装置の構成と基礎","subcategory":"撮影条件","question":"管電流と画質の関係で正しいのはどれか。","choices":{"a":"管電流を増やすと，ノイズが増加する。","b":"管電流を増やすと，CNRが低下する。","c":"管電流とノイズの二乗平均は反比例の関係にある。","d":"管電流を減らすと，被ばく線量が増加する。","e":"管電流は画質に無関係である。"},"correct":"c","explanation":"","tags":"管電流;ノイズ;画質"}
-];
+(function(){
+"use strict";
 
-const LETTERS = ["a","b","c","d","e"];
-const STORAGE_KEY = "ct_ap_progress_v1";
+var ALL_QUESTIONS = JSON.parse(document.getElementById('quiz-data').textContent);
+var CATEGORY_ORDER = [];
+ALL_QUESTIONS.forEach(function(q){ if(CATEGORY_ORDER.indexOf(q.category)===-1) CATEGORY_ORDER.push(q.category); });
 
-/* =========================================================
-   進捗ストレージ
-========================================================= */
-function loadProgress(){
-  try{
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-  }catch(e){ return {}; }
-}
-function saveProgress(p){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
-}
-function recordAnswer(qid, isCorrect){
-  const p = loadProgress();
-  const rec = p[qid] || {attempts:0, correct:0, streak:0};
-  rec.attempts++;
-  if(isCorrect){ rec.correct++; rec.streak++; }
-  else { rec.streak = 0; }
-  p[qid] = rec;
-  saveProgress(p);
-}
-function statusOf(qid){
-  const p = loadProgress();
-  const rec = p[qid];
-  if(!rec || rec.attempts===0) return "new";
-  if(rec.streak >= 2) return "master";
-  if(rec.streak === 0) return "weak";
-  return "learning";
-}
-const STATUS_LABEL = {new:"未挑戦", weak:"苦手", learning:"学習中", master:"習得"};
+var CATEGORY_ICON = {};
+(function(){
+  var icons = [
+    '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="4" r="1.4" fill="currentColor" stroke="none"/>',
+    '<path d="M4 18c2-8 6-12 8-12s6 4 8 12" fill="none"/><path d="M7 18c1.4-5.5 3.6-8.5 5-8.5s3.6 3 5 8.5" fill="none"/>',
+    '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+    '<path d="M12 3l7 3v6c0 5-3 8-7 9-4-1-7-4-7-9V6l7-3z" fill="none"/><path d="M9 12l2 2 4-4"/>'
+  ];
+  CATEGORY_ORDER.forEach(function(cat,i){ CATEGORY_ICON[cat] = icons[i % icons.length]; });
+})();
 
-/* =========================================================
-   ルーティング / タブ
-========================================================= */
-let currentTab = "practice";
-const tabButtons = document.querySelectorAll("nav.tabbar button");
-tabButtons.forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    tabButtons.forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    currentTab = btn.dataset.tab;
-    render();
+var LS_KEY = 'ctquiz_progress_v1';
+function loadStore(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {missed:{}, attempts:{}}; }
+  catch(e){ return {missed:{}, attempts:{}}; }
+}
+function saveStore(s){ try{ localStorage.setItem(LS_KEY, JSON.stringify(s)); }catch(e){} }
+var store = loadStore();
+
+var state = {
+  screen: 'home',
+  selectedCats: CATEGORY_ORDER.slice(),
+  count: 20,
+  shuffle: true,
+  weakOnly: false,
+  queue: [],
+  idx: 0,
+  answered: null,
+  score: 0,
+  history: []
+};
+
+function byId(id){ return document.getElementById(id); }
+function el(tag, attrs, children){
+  var e = document.createElement(tag);
+  attrs = attrs || {};
+  for(var k in attrs){
+    if(k==='class') e.className = attrs[k];
+    else if(k==='html') e.innerHTML = attrs[k];
+    else if(k.indexOf('on')===0 && typeof attrs[k]==='function') e.addEventListener(k.slice(2), attrs[k]);
+    else if(attrs[k]===null || attrs[k]===false || attrs[k]===undefined){ /* skip: no attribute */ }
+    else if(attrs[k]===true) e.setAttribute(k, '');
+    else e.setAttribute(k, attrs[k]);
+  }
+  (children||[]).forEach(function(c){
+    if(c==null) return;
+    if(typeof c === 'string') e.appendChild(document.createTextNode(c));
+    else e.appendChild(c);
   });
-});
-
-/* =========================================================
-   共通ヘルパー
-========================================================= */
-function uniq(arr){ return [...new Set(arr)]; }
-function categories(){ return uniq(QUESTIONS.map(q=>q.category)); }
-function subcategories(cat){ return uniq(QUESTIONS.filter(q=> cat==="__all__" || q.category===cat).map(q=>q.subcategory)); }
-function shuffle(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+  return e;
+}
+function svgIcon(inner){
+  return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';
+}
+function shuffleArr(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t=a[i]; a[i]=a[j]; a[j]=t;
   }
   return a;
 }
-
-/* =========================================================
-   演習モード：セットアップ状態
-========================================================= */
-let practiceSetup = {
-  category: "__all__",
-  subcats: [],       // 空 = 全サブカテゴリー
-  statuses: [],       // 空 = 全ステータス
-};
-
-function filteredPracticeQuestions(){
-  return QUESTIONS.filter(q=>{
-    if(practiceSetup.category !== "__all__" && q.category !== practiceSetup.category) return false;
-    if(practiceSetup.subcats.length && !practiceSetup.subcats.includes(q.subcategory)) return false;
-    if(practiceSetup.statuses.length && !practiceSetup.statuses.includes(statusOf(q.id))) return false;
-    return true;
+function ringSvg(size, stroke, pct, color){
+  var r = (size-stroke)/2;
+  var c = 2*Math.PI*r;
+  var off = c*(1-pct);
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'">'+
+    '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="'+stroke+'"/>'+
+    '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="'+stroke+'" '+
+      'stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'" style="transition:stroke-dashoffset .4s ease"/>'+
+    '</svg>';
+}
+function sinogramSvg(){
+  var lines = '';
+  for(var i=0;i<48;i++){
+    var ang = (i/48)*Math.PI;
+    var r = 128;
+    var x1 = 140 + r*Math.cos(ang), y1 = 140 + r*Math.sin(ang);
+    var x2 = 140 - r*Math.cos(ang), y2 = 140 - r*Math.sin(ang);
+    var op = 0.05 + 0.22*Math.abs(Math.sin(ang*3));
+    var col = i%7===0 ? 'var(--amber)' : 'var(--accent)';
+    lines += '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="1" opacity="'+op.toFixed(2)+'"/>';
+  }
+  var rings = '';
+  [40,68,96,124].forEach(function(r,i){
+    rings += '<circle cx="140" cy="140" r="'+r+'" fill="none" stroke="var(--line-soft)" stroke-width="1"/>';
   });
+  return '<svg class="sinogram" viewBox="0 0 280 280" role="img" aria-label="CT走査を表す装飾図形">'+rings+lines+
+    '<circle cx="140" cy="140" r="4" fill="var(--accent)"/></svg>';
 }
 
-/* =========================================================
-   出題セッション（演習・模擬試験共通）
-========================================================= */
-let session = null; // {mode, queue:[q...], idx, answers:{}, revealed, examMode}
-
-function startSession(list, examMode){
-  session = {
-    queue: shuffle(list),
-    idx: 0,
-    answers: {},     // qid -> chosen letter
-    revealed: false,
-    examMode: examMode
-  };
-  render();
+function catCount(cat){ return ALL_QUESTIONS.filter(function(q){return q.category===cat;}).length; }
+function weakCount(){
+  var ids = Object.keys(store.missed).filter(function(id){ return store.missed[id] > 0; });
+  return ids.length;
 }
 
-function currentQuestion(){ return session.queue[session.idx]; }
-
-function chooseAnswer(letter){
-  if(session.revealed) return;
-  const q = currentQuestion();
-  session.answers[q.id] = letter;
-  const isCorrect = letter === q.correct;
-  recordAnswer(q.id, isCorrect);
-  if(!session.examMode){
-    session.revealed = true;
-  }
-  render();
-}
-
-function nextQuestion(){
-  if(session.idx < session.queue.length - 1){
-    session.idx++;
-    session.revealed = false;
-    render();
-  } else {
-    session.finished = true;
-    render();
-  }
-}
-function prevQuestion(){
-  if(session.idx > 0){
-    session.idx--;
-    session.revealed = !session.examMode && !!session.answers[currentQuestion().id];
-    render();
-  }
-}
-
-/* =========================================================
-   レンダリング：メイン振り分け
-========================================================= */
 function render(){
-  const main = document.getElementById("main");
-  if(currentTab === "progress"){
-    session = null;
-    main.innerHTML = renderProgressTab();
-    attachProgressEvents();
-    return;
-  }
-  if(currentTab === "practice"){
-    if(session && !session.finished){ main.innerHTML = renderQuiz(); attachQuizEvents(); }
-    else if(session && session.finished){ main.innerHTML = renderResult(); attachResultEvents(); }
-    else { main.innerHTML = renderPracticeSetup(); attachPracticeSetupEvents(); }
-    return;
-  }
-  if(currentTab === "exam"){
-    if(session && !session.finished){ main.innerHTML = renderQuiz(); attachQuizEvents(); }
-    else if(session && session.finished){ main.innerHTML = renderResult(); attachResultEvents(); }
-    else { main.innerHTML = renderExamSetup(); attachExamSetupEvents(); }
-    return;
-  }
+  var app = byId('app');
+  app.innerHTML = '';
+  app.appendChild(renderTopbar());
+  if(state.screen==='home') app.appendChild(renderHome());
+  else if(state.screen==='quiz') app.appendChild(renderQuiz());
+  else if(state.screen==='result') app.appendChild(renderResult());
+  app.appendChild(renderFooter());
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant':'auto'});
 }
 
-/* =========================================================
-   演習セットアップ画面
-========================================================= */
-function renderPracticeSetup(){
-  const cats = categories();
-  const subs = subcategories(practiceSetup.category);
-  const count = filteredPracticeQuestions().length;
-
-  return `
-    <h2 class="section-title">演習モード設定</h2>
-    <div class="card">
-      <label class="field-label">カテゴリー</label>
-      <select id="cat-select">
-        <option value="__all__" ${practiceSetup.category==="__all__"?"selected":""}>すべて</option>
-        ${cats.map(c=>`<option value="${esc(c)}" ${practiceSetup.category===c?"selected":""}>${esc(c)}</option>`).join("")}
-      </select>
-
-      <label class="field-label">サブカテゴリー（未選択＝すべて）</label>
-      <div class="chip-group" id="subcat-chips">
-        ${subs.map(s=>`<span class="chip ${practiceSetup.subcats.includes(s)?"selected":""}" data-sub="${esc(s)}">${esc(s)}</span>`).join("")}
-      </div>
-
-      <label class="field-label">習熟度で絞り込む（未選択＝すべて）</label>
-      <div class="chip-group" id="status-chips">
-        ${["new","weak","learning","master"].map(st=>`<span class="chip ${practiceSetup.statuses.includes(st)?"selected":""}" data-status="${st}">${STATUS_LABEL[st]}</span>`).join("")}
-      </div>
-
-      <div class="count-line">出題対象：<b>${count}</b> 問</div>
-      <button class="start-btn" id="start-practice" ${count===0?"disabled":""}>演習をはじめる</button>
-    </div>
-  `;
+function renderTopbar(){
+  var back = state.screen!=='home';
+  return el('div',{class:'topbar'},[
+    el('div',{class:'brand'},[
+      el('div',{class:'mark'}),
+      el('div',{class:'name'},['GANTRY', el('small',{},['CT認定試験対策'])])
+    ]),
+    back ? el('button',{class:'icon-btn', onclick:function(){
+      if(state.screen==='quiz'){
+        if(!confirm('検査を中断してホームに戻りますか？進行中の結果は保存されません。')) return;
+      }
+      state.screen='home'; render();
+    }},[el('span',{html:svgIcon('<path d="M15 18l-6-6 6-6"/>')}), 'ホームへ']) : el('span',{class:'icon-btn', style:'visibility:hidden'},['　'])
+  ]);
 }
-function attachPracticeSetupEvents(){
-  document.getElementById("cat-select").addEventListener("change", e=>{
-    practiceSetup.category = e.target.value;
-    practiceSetup.subcats = [];
-    render();
-  });
-  document.querySelectorAll("#subcat-chips .chip").forEach(chip=>{
-    chip.addEventListener("click", ()=>{
-      const s = chip.dataset.sub;
-      const i = practiceSetup.subcats.indexOf(s);
-      if(i>-1) practiceSetup.subcats.splice(i,1); else practiceSetup.subcats.push(s);
+
+function renderFooter(){
+  return el('footer',{class:'app-footer'},['GANTRY — CT認定試験対策 ／ 全 '+ALL_QUESTIONS.length+' 問収録']);
+}
+
+/* ---------------- HOME ---------------- */
+function renderHome(){
+  var wrap = el('div',{});
+
+  var hero = el('section',{class:'hero'},[
+    el('div',{},[
+      el('div',{class:'eyebrow'},['CT認定技師試験対策']),
+      el('p',{class:'lead'},['4分野・250問を1問ずつ解いて、解説とともに理解を積み上げていきます。']),
+      el('div',{class:'hero-stats'},[
+        statBlock(String(ALL_QUESTIONS.length), '収録問題数'),
+        statBlock(String(CATEGORY_ORDER.length), '出題分野'),
+        statBlock(String(weakCount()), '要復習問題')
+      ])
+    ]),
+    el('div',{class:'sinogram-wrap'},[ (function(){ var d=document.createElement('div'); d.innerHTML=sinogramSvg(); return d.firstChild; })() ])
+  ]);
+  wrap.appendChild(hero);
+
+  wrap.appendChild(el('div',{class:'section-label'},['分野を選択']));
+  var grid = el('div',{class:'cat-grid'});
+  CATEGORY_ORDER.forEach(function(cat){
+    var active = state.selectedCats.indexOf(cat)>-1;
+    var card = el('button',{class:'cat-card'+(active?' active':''), type:'button', onclick:function(){
+      var i = state.selectedCats.indexOf(cat);
+      if(i>-1){
+        if(state.selectedCats.length===1) return;
+        state.selectedCats.splice(i,1);
+      } else state.selectedCats.push(cat);
       render();
-    });
+    }},[
+      el('span',{class:'icon', html:svgIcon(CATEGORY_ICON[cat])}),
+      el('div',{},[
+        el('div',{class:'cat-title'},[cat]),
+        el('div',{class:'cat-meta'},[catCount(cat)+' 問']),
+      ]),
+      el('span',{class:'check'})
+    ]);
+    grid.appendChild(card);
   });
-  document.querySelectorAll("#status-chips .chip").forEach(chip=>{
-    chip.addEventListener("click", ()=>{
-      const s = chip.dataset.status;
-      const i = practiceSetup.statuses.indexOf(s);
-      if(i>-1) practiceSetup.statuses.splice(i,1); else practiceSetup.statuses.push(s);
-      render();
-    });
+  wrap.appendChild(grid);
+
+  wrap.appendChild(el('div',{class:'section-label'},['検査条件']));
+  var setup = el('div',{class:'setup-row'});
+
+  var countField = el('div',{class:'field'},[el('label',{},['出題数'])]);
+  var seg = el('div',{class:'seg'});
+  [10,20,50,'all'].forEach(function(v){
+    var label = v==='all' ? '全問' : String(v);
+    var b = el('button',{type:'button', class: state.count===v ? 'active':'', onclick:function(){ state.count=v; render(); }},[label]);
+    seg.appendChild(b);
   });
-  const startBtn = document.getElementById("start-practice");
-  if(startBtn) startBtn.addEventListener("click", ()=>{
-    startSession(filteredPracticeQuestions(), false);
+  countField.appendChild(seg);
+  setup.appendChild(countField);
+
+  var orderField = el('div',{class:'field'},[el('label',{},['出題順'])]);
+  var seg2 = el('div',{class:'seg'});
+  [[true,'シャッフル'],[false,'ID順']].forEach(function(pair){
+    var b = el('button',{type:'button', class: state.shuffle===pair[0] ? 'active':'', onclick:function(){ state.shuffle=pair[0]; render(); }},[pair[1]]);
+    seg2.appendChild(b);
   });
+  orderField.appendChild(seg2);
+  setup.appendChild(orderField);
+
+  wrap.appendChild(setup);
+
+  if(weakCount()>0){
+    wrap.appendChild(el('div',{class:'weak-banner'},[
+      el('div',{class:'t'},['過去に誤答した問題が ', el('b',{},[String(weakCount())]), ' 問あります。']),
+      el('button',{class:'btn-ghost', onclick:function(){ startQuiz(true); }},['苦手問題だけ解く'])
+    ]));
+  }
+
+  var pool = poolForSelection();
+  wrap.appendChild(el('div',{class:'start-bar'},[
+    el('div',{class:'avail', html:'選択中: <span class="mono">'+pool.length+'</span> 問から出題されます'}),
+    el('button',{class:'btn-primary', disabled: pool.length===0, onclick:function(){ startQuiz(false); }},[
+      el('span',{html:svgIcon('<path d="M5 3l14 9-14 9V3z"/>')}), 'スキャン開始'
+    ])
+  ]));
+
+  return wrap;
+}
+function statBlock(num,label){
+  return el('div',{},[ el('div',{class:'num'},[num]), el('div',{class:'lbl'},[label]) ]);
+}
+function poolForSelection(){
+  return ALL_QUESTIONS.filter(function(q){ return state.selectedCats.indexOf(q.category)>-1; });
 }
 
-/* =========================================================
-   模擬試験セットアップ画面
-========================================================= */
-let examSetup = { count: Math.min(10, QUESTIONS.length) };
-function renderExamSetup(){
-  const max = QUESTIONS.length;
-  const options = uniq([5,10,20,max].filter(n=>n>0 && n<=max));
-  return `
-    <h2 class="section-title">模擬試験モード</h2>
-    <div class="card">
-      <p style="color:var(--sub);font-size:13.5px;line-height:1.7;margin-top:0;">
-        全カテゴリーからランダムに出題します。採点は最後にまとめて表示され、途中で正誤はわかりません。
-      </p>
-      <label class="field-label">出題数</label>
-      <div class="chip-group">
-        ${options.map(n=>`<span class="chip ${examSetup.count===n?"selected":""}" data-count="${n}">${n}問</span>`).join("")}
-      </div>
-      <div class="count-line">全 <b>${max}</b> 問中から <b>${examSetup.count}</b> 問を出題</div>
-      <button class="start-btn" id="start-exam">模擬試験を開始する</button>
-    </div>
-  `;
-}
-function attachExamSetupEvents(){
-  document.querySelectorAll("[data-count]").forEach(chip=>{
-    chip.addEventListener("click", ()=>{
-      examSetup.count = parseInt(chip.dataset.count,10);
-      render();
-    });
-  });
-  document.getElementById("start-exam").addEventListener("click", ()=>{
-    const pool = shuffle(QUESTIONS).slice(0, examSetup.count);
-    startSession(pool, true);
-  });
+function startQuiz(weak){
+  var pool;
+  if(weak){
+    pool = ALL_QUESTIONS.filter(function(q){ return (store.missed[q.id]||0) > 0; });
+  } else {
+    pool = poolForSelection();
+  }
+  if(pool.length===0) return;
+  var ordered = state.shuffle ? shuffleArr(pool) : pool.slice();
+  var n = weak ? ordered.length : (state.count==='all' ? ordered.length : Math.min(state.count, ordered.length));
+  state.queue = ordered.slice(0,n);
+  state.idx = 0;
+  state.answered = null;
+  state.score = 0;
+  state.history = [];
+  state.screen = 'quiz';
+  render();
 }
 
-/* =========================================================
-   出題画面（演習・模擬試験 共通）
-========================================================= */
+/* ---------------- QUIZ ---------------- */
+function currentQ(){ return state.queue[state.idx]; }
+
 function renderQuiz(){
-  const q = currentQuestion();
-  const total = session.queue.length;
-  const answered = session.answers[q.id];
-  const pct = Math.round(((session.idx) / total) * 100);
+  var q = currentQ();
+  var wrap = el('div',{});
+  var pct = state.queue.length ? state.idx/state.queue.length : 0;
+  var deg = Math.round(pct*360);
 
-  const choiceHtml = LETTERS.map(l=>{
-    if(!(l in q.choices)) return "";
-    let cls = "choice";
-    if(session.revealed || (session.examMode && answered)){
-      if(l === q.correct) cls += " correct";
-      else if(l === answered) cls += " incorrect";
-      else cls += " dim";
-      cls += " disabled";
-    } else if(answered === l){
-      cls += " selected";
+  var ringDiv = el('div',{class:'ring-wrap'});
+  ringDiv.innerHTML = ringSvg(52,4,pct,'var(--accent)');
+  var degSpan = el('div',{class:'deg'},[deg+'°']);
+  ringDiv.appendChild(degSpan);
+
+  wrap.appendChild(el('div',{class:'quiz-top'},[
+    ringDiv,
+    el('div',{class:'quiz-meta'},[
+      el('div',{class:'cat'},[q.category]),
+      el('div',{class:'prog'},[el('b',{},[String(state.idx+1)]), ' / '+state.queue.length+' 問'])
+    ])
+  ]));
+
+  var card = el('div',{class:'q-card'});
+  card.appendChild(el('div',{},[
+    el('span',{class:'q-id mono'},[q.id]),
+    el('span',{class:'q-sub'},[q.subcategory])
+  ]));
+  card.appendChild(el('div',{class:'q-text'},[q.question]));
+
+  var choicesDiv = el('div',{class:'choices'});
+  var letters = ['a','b','c','d'];
+  letters.forEach(function(L){
+    var isAnswered = state.answered !== null;
+    var isCorrect = L === q.answer;
+    var isPicked = state.answered === L;
+    var cls = 'choice';
+    if(isAnswered){
+      if(isCorrect) cls += ' correct';
+      else if(isPicked) cls += ' wrong';
+      else cls += ' dim';
     }
-    return `<div class="${cls}" data-letter="${l}">
-      <span class="letter">${l}</span>
-      <span>${esc(q.choices[l])}</span>
-    </div>`;
-  }).join("");
+    var btn = el('button',{type:'button', class:cls, disabled: isAnswered ? 'disabled' : null, onclick:function(){ selectAnswer(L); }},[
+      el('span',{class:'badge'},[L.toUpperCase()]),
+      el('span',{},[q.choices[L]])
+    ]);
+    choicesDiv.appendChild(btn);
+  });
+  card.appendChild(choicesDiv);
 
-  let feedbackHtml = "";
-  if(session.revealed){
-    const isCorrect = answered === q.correct;
-    feedbackHtml = `
-      <div class="feedback ${isCorrect?"correct":"incorrect"}">
-        <div class="fb-head">${isCorrect ? "◎ 正解" : "✕ 不正解　正解は " + q.correct.toUpperCase()}</div>
-        <div class="fb-body">${q.explanation ? esc(q.explanation) : "（このカテゴリーの考え方を確認しておきましょう）"}</div>
-      </div>`;
+  if(state.answered !== null){
+    var correct = state.answered === q.answer;
+    var expWrap = el('div',{class:'explain'});
+    expWrap.appendChild(el('div',{class:'result-tag '+(correct?'ok':'ng')},[correct?'正解':'不正解 — 正答は '+q.answer.toUpperCase()]));
+    expWrap.appendChild(el('p',{},[q.explanation]));
+    if(q.tags){
+      var tagsDiv = el('div',{class:'tags'});
+      q.tags.split(';').forEach(function(t){ t=t.trim(); if(t) tagsDiv.appendChild(el('span',{class:'tag'},[t])); });
+      expWrap.appendChild(tagsDiv);
+    }
+    card.appendChild(expWrap);
   }
 
-  return `
-    <div class="quiz-top">
-      <span>${session.examMode ? "模擬試験" : "演習"} ・ ${session.idx+1} / ${total}</span>
-      <span>${q.id}</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+  var actions = el('div',{class:'q-actions'});
+  actions.appendChild(el('button',{class:'link-quiet', onclick:function(){
+    if(!confirm('検査を終了して結果を確認しますか？')) return;
+    finishQuiz();
+  }}, ['ここで終了して結果を見る']));
 
-    <div class="q-meta">${esc(q.category)} ／ ${esc(q.subcategory)}</div>
-    <div class="q-text">${esc(q.question)}</div>
+  if(state.answered !== null){
+    var isLast = state.idx === state.queue.length-1;
+    actions.appendChild(el('button',{class:'btn-primary', onclick:function(){
+      if(isLast) finishQuiz(); else nextQuestion();
+    }},[ isLast ? '結果を見る' : '次の問題', el('span',{html:svgIcon('<path d="M9 6l6 6-6 6"/>')})]));
+  }
+  card.appendChild(actions);
+  wrap.appendChild(card);
+  wrap.appendChild(el('div',{class:'kbd-hint'},['選択: ',el('kbd',{},['1']),el('kbd',{},['2']),el('kbd',{},['3']),el('kbd',{},['4']),'　次へ: ',el('kbd',{},['Enter'])]));
 
-    <div id="choices">${choiceHtml}</div>
-    ${feedbackHtml}
-
-    <div class="nav-row">
-      <button class="btn" id="prev-btn" ${session.idx===0?"disabled":""}>戻る</button>
-      <button class="btn primary" id="next-btn" ${(!session.examMode && !session.revealed)?"disabled":""}>
-        ${session.idx===total-1 ? "結果を見る" : "次の問題"}
-      </button>
-    </div>
-  `;
-}
-function attachQuizEvents(){
-  document.querySelectorAll("#choices .choice").forEach(el=>{
-    el.addEventListener("click", ()=>{
-      if(el.classList.contains("disabled")) return;
-      chooseAnswer(el.dataset.letter);
-    });
-  });
-  document.getElementById("prev-btn").addEventListener("click", prevQuestion);
-  document.getElementById("next-btn").addEventListener("click", ()=>{
-    if(session.examMode && !session.answers[currentQuestion().id]){
-      if(!confirm("未回答です。このまま次に進みますか？")) return;
-    }
-    nextQuestion();
-  });
+  return wrap;
 }
 
-/* =========================================================
-   結果画面
-========================================================= */
+function selectAnswer(L){
+  if(state.answered !== null) return;
+  var q = currentQ();
+  state.answered = L;
+  var correct = L === q.answer;
+  if(correct) state.score++;
+  store.missed[q.id] = correct ? 0 : ((store.missed[q.id]||0) + 1);
+  store.attempts[q.id] = (store.attempts[q.id]||0) + 1;
+  saveStore(store);
+  state.history.push({q:q, picked:L, correct:correct});
+  render();
+}
+function nextQuestion(){
+  state.idx++;
+  state.answered = null;
+  render();
+}
+function finishQuiz(){
+  state.screen = 'result';
+  render();
+}
+
+document.addEventListener('keydown', function(e){
+  if(state.screen !== 'quiz') return;
+  var map = {'1':'a','2':'b','3':'c','4':'d'};
+  if(map[e.key] && state.answered===null){ selectAnswer(map[e.key]); }
+  else if(e.key==='Enter' && state.answered!==null){
+    var isLast = state.idx === state.queue.length-1;
+    if(isLast) finishQuiz(); else nextQuestion();
+  }
+});
+
+/* ---------------- RESULT ---------------- */
 function renderResult(){
-  const total = session.queue.length;
-  let correctCount = 0;
-  session.queue.forEach(q=>{ if(session.answers[q.id]===q.correct) correctCount++; });
-  const pct = Math.round((correctCount/total)*100);
+  var wrap = el('div',{});
+  var total = state.history.length;
+  var correct = state.history.filter(function(h){return h.correct;}).length;
+  var pct = total ? correct/total : 0;
 
-  const reviewHtml = session.queue.map(q=>{
-    const ans = session.answers[q.id];
-    const ok = ans === q.correct;
-    return `
-      <div class="review-item">
-        <div><span class="rtag ${ok?"ok":"ng"}">${ok?"正解":"不正解"}</span><span class="q-meta" style="display:inline">${esc(q.subcategory)}</span></div>
-        <div class="rq">${esc(q.question)}</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--sub);">
-          あなたの回答：${ans ? ans.toUpperCase() : "（未回答）"} ／ 正解：${q.correct.toUpperCase()}
-        </div>
-      </div>
-    `;
-  }).join("");
+  var ring = el('div',{class:'score-ring'});
+  ring.innerHTML = ringSvg(168,12,pct,'var(--accent)');
+  ring.appendChild(el('div',{class:'center'},[
+    el('div',{class:'pct mono'},[Math.round(pct*100)+'%']),
+    el('div',{class:'of'},[correct+' / '+total+' 問正解'])
+  ]));
 
-  return `
-    <h2 class="section-title">結果</h2>
-    <div class="card">
-      <div class="score-ring-wrap">
-        <div>
-          <div class="score-num" style="color:${pct>=80?"var(--green)":pct>=50?"var(--amber)":"var(--red)"}">${correctCount} / ${total}</div>
-          <div class="score-label">正答率 ${pct}%</div>
-        </div>
-      </div>
-      <div class="nav-row">
-        <button class="btn" id="retry-btn">もう一度</button>
-        <button class="btn primary" id="back-btn">設定に戻る</button>
-      </div>
-    </div>
-    <h2 class="section-title">解答内容</h2>
-    <div class="card">${reviewHtml}</div>
-  `;
-}
-function attachResultEvents(){
-  document.getElementById("retry-btn").addEventListener("click", ()=>{
-    const list = session.queue;
-    const examMode = session.examMode;
-    startSession(list, examMode);
+  var msg = pct>=0.8 ? '高精度な画像が再構成されました。この分野は安定しています。' :
+            pct>=0.5 ? 'ノイズはありますが、輪郭は見えています。誤答を復習しましょう。' :
+            '再構成にはまだノイズが多いようです。解説を読み込んで再挑戦しましょう。';
+
+  wrap.appendChild(el('section',{class:'result-hero'},[
+    ring,
+    el('div',{class:'result-copy'},[ el('h2',{},['画像再構成 完了']), el('p',{},[msg]) ])
+  ]));
+
+  wrap.appendChild(el('div',{class:'section-label'},['分野別スコア']));
+  var barList = el('div',{class:'bar-list'});
+  var byCat = {};
+  state.history.forEach(function(h){
+    var c = h.q.category;
+    byCat[c] = byCat[c] || {c:0,t:0};
+    byCat[c].t++;
+    if(h.correct) byCat[c].c++;
   });
-  document.getElementById("back-btn").addEventListener("click", ()=>{
-    session = null;
-    render();
+  Object.keys(byCat).forEach(function(c){
+    var d = byCat[c];
+    var p = d.t? d.c/d.t : 0;
+    var row = el('div',{class:'bar-row'},[
+      el('div',{class:'top'},[ el('span',{class:'name'},[c]), el('span',{class:'frac mono'},[d.c+'/'+d.t]) ]),
+      el('div',{class:'bar-track'},[ el('div',{class:'bar-fill', style:'width:'+(p*100)+'%'}) ])
+    ]);
+    barList.appendChild(row);
   });
+  wrap.appendChild(barList);
+
+  wrap.appendChild(el('div',{class:'section-label'},['誤答の復習']));
+  var wrongs = state.history.filter(function(h){return !h.correct;});
+  if(wrongs.length===0){
+    wrap.appendChild(el('div',{class:'empty-note'},['誤答はありませんでした。']));
+  } else {
+    var rl = el('div',{class:'review-list'});
+    wrongs.forEach(function(h){
+      var item = el('div',{class:'review-item'},[
+        el('div',{},[ el('span',{class:'q-id mono'},[h.q.id]), el('span',{class:'q-sub'},[h.q.subcategory]) ]),
+        el('div',{class:'rq'},[h.q.question]),
+        el('div',{class:'ra'},[
+          el('div',{class:'you'},['あなたの回答: '+h.picked.toUpperCase()+'）'+h.q.choices[h.picked]]),
+          el('div',{class:'right'},['正答: '+h.q.answer.toUpperCase()+'）'+h.q.choices[h.q.answer]])
+        ]),
+        el('div',{class:'rexp'},[h.q.explanation])
+      ]);
+      rl.appendChild(item);
+    });
+    wrap.appendChild(rl);
+  }
+
+  wrap.appendChild(el('div',{class:'result-actions'},[
+    el('button',{class:'btn-primary', onclick:function(){ startQuiz(false); }},['同じ条件でもう一度']),
+    wrongs.length>0 ? el('button',{class:'btn-ghost', onclick:function(){
+      state.queue = state.shuffle ? shuffleArr(wrongs.map(function(h){return h.q;})) : wrongs.map(function(h){return h.q;});
+      state.idx=0; state.answered=null; state.score=0; state.history=[];
+      state.screen='quiz'; render();
+    }},['誤答だけ再挑戦']) : null,
+    el('button',{class:'btn-ghost', onclick:function(){ state.screen='home'; render(); }},['ホームに戻る'])
+  ]));
+
+  return wrap;
 }
 
-/* =========================================================
-   進捗タブ
-========================================================= */
-function renderProgressTab(){
-  const p = loadProgress();
-  const counts = {new:0, weak:0, learning:0, master:0};
-  QUESTIONS.forEach(q=> counts[statusOf(q.id)]++ );
-
-  const cats = categories();
-  const catRows = cats.map(cat=>{
-    const qs = QUESTIONS.filter(q=>q.category===cat);
-    const masterCount = qs.filter(q=>statusOf(q.id)==="master").length;
-    const attemptedCount = qs.filter(q=> (p[q.id]||{}).attempts > 0).length;
-    const pct = Math.round((masterCount/qs.length)*100);
-    return `
-      <div class="stat-row">
-        <div>
-          <div class="stat-name">${esc(cat)}</div>
-          <div class="stat-sub">${attemptedCount}/${qs.length} 問挑戦済み</div>
-        </div>
-        <div style="display:flex;align-items:center;">
-          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-          <div class="stat-num">${masterCount}/${qs.length}</div>
-        </div>
-      </div>
-    `;
-  }).join("");
-
-  // サブカテゴリー別（習得率の低い順に注意喚起）
-  const allSubs = uniq(QUESTIONS.map(q=>q.subcategory));
-  const subRows = allSubs.map(sub=>{
-    const qs = QUESTIONS.filter(q=>q.subcategory===sub);
-    const masterCount = qs.filter(q=>statusOf(q.id)==="master").length;
-    const pct = Math.round((masterCount/qs.length)*100);
-    return {sub, qs, masterCount, pct};
-  }).sort((a,b)=>a.pct-b.pct).map(r=>`
-      <div class="stat-row">
-        <div>
-          <div class="stat-name">${esc(r.sub)}</div>
-        </div>
-        <div style="display:flex;align-items:center;">
-          <div class="bar-track"><div class="bar-fill" style="width:${r.pct}%"></div></div>
-          <div class="stat-num">${r.masterCount}/${r.qs.length}</div>
-        </div>
-      </div>
-  `).join("");
-
-  return `
-    <h2 class="section-title">習熟度サマリー</h2>
-    <div class="master-badges">
-      <div class="badge new"><div class="n">${counts.new}</div><div class="l">未挑戦</div></div>
-      <div class="badge weak"><div class="n">${counts.weak}</div><div class="l">苦手</div></div>
-      <div class="badge learning"><div class="n">${counts.learning}</div><div class="l">学習中</div></div>
-      <div class="badge master"><div class="n">${counts.master}</div><div class="l">習得</div></div>
-    </div>
-
-    <h2 class="section-title" style="margin-top:22px;">カテゴリー別</h2>
-    <div class="card">${catRows}</div>
-
-    <h2 class="section-title" style="margin-top:22px;">サブカテゴリー別（習得率の低い順）</h2>
-    <div class="card">${subRows}</div>
-
-    <button class="reset-link" id="reset-progress">この端末の学習記録をすべてリセットする</button>
-  `;
-}
-function attachProgressEvents(){
-  document.getElementById("reset-progress").addEventListener("click", ()=>{
-    if(confirm("学習記録をすべて削除します。よろしいですか？")){
-      localStorage.removeItem(STORAGE_KEY);
-      render();
-    }
-  });
-}
-
-/* =========================================================
-   ユーティリティ
-========================================================= */
-function esc(str){
-  if(str===undefined || str===null) return "";
-  return String(str)
-    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
-}
-
-/* 初期描画 */
 render();
+})();
 </script>
 </body>
 </html>
