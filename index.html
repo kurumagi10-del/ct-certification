@@ -85,8 +85,7 @@ a{color:inherit;}
 .icon-btn:hover{border-color:var(--accent); color:var(--text);}
 
 /* ---------- Hero ---------- */
-.hero{position:relative; padding:30px 4px 10px; display:grid; gap:26px;}
-@media (min-width:760px){ .hero{grid-template-columns:1.15fr .85fr; align-items:center; padding:40px 4px 20px;} }
+.hero{position:relative; padding:30px 4px 6px;}
 .hero .eyebrow{
   font-family:var(--font-mono); font-size:.74rem; letter-spacing:.16em; text-transform:uppercase;
   color:var(--accent); margin:0 0 14px; display:flex; align-items:center; gap:9px;
@@ -94,16 +93,19 @@ a{color:inherit;}
 .hero .eyebrow::before{content:""; width:7px;height:7px;border-radius:50%; background:var(--accent); box-shadow:0 0 8px 2px var(--accent-dim); flex:none;}
 .hero p.lead{
   color:var(--text); font-family:var(--font-display); font-weight:700;
-  font-size:clamp(1.3rem, 3vw, 1.7rem); line-height:1.55; max-width:30ch; margin:0 0 26px; letter-spacing:-.005em;
+  font-size:clamp(1.3rem, 3vw, 1.7rem); line-height:1.55; max-width:36ch; margin:0 0 26px; letter-spacing:-.005em;
 }
 .hero-stats{display:flex; gap:26px; flex-wrap:wrap;}
 .hero-stats div{display:flex; flex-direction:column; gap:2px;}
 .hero-stats .num{font-family:var(--font-mono); font-size:1.5rem; font-weight:600; color:var(--accent-strong);}
 .hero-stats .lbl{font-size:.7rem; color:var(--text-faint); letter-spacing:.08em; text-transform:uppercase;}
 
-.sinogram-wrap{display:flex; align-items:center; justify-content:center;}
-.sinogram{width:min(280px,72vw); height:min(280px,72vw); animation:spin 90s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+.tab-nav{display:flex; border:1px solid var(--line); border-radius:999px; padding:3px; gap:2px; max-width:340px; margin:32px 0 0;}
+.tab-nav button{
+  flex:1; background:none; border:none; color:var(--text-dim); padding:10px 6px; border-radius:999px;
+  font-size:.86rem; font-weight:600; cursor:pointer; transition:.15s;
+}
+.tab-nav button.active{background:var(--accent); color:#04211D;}
 
 /* ---------- Category grid ---------- */
 .section-label{
@@ -251,7 +253,17 @@ a{color:inherit;}
 .bar-row .top .name{color:var(--text-dim);}
 .bar-row .top .frac{font-family:var(--font-mono); color:var(--text-faint);}
 .bar-track{height:8px; border-radius:99px; background:var(--panel-2); border:1px solid var(--line); overflow:hidden;}
-.bar-fill{height:100%; background:linear-gradient(90deg, var(--accent), var(--accent-strong)); border-radius:99px;}
+.bar-fill{height:100%; border-radius:99px; transition:width .3s ease;}
+.bar-fill.good{background:linear-gradient(90deg, var(--good), #8fe6b9);}
+.bar-fill.amber{background:linear-gradient(90deg, var(--amber), #ffd28c);}
+.bar-fill.bad{background:linear-gradient(90deg, var(--bad), #ff97ac);}
+.bar-fill.neutral{background:var(--line-soft);}
+.bar-row .sub{font-size:.72rem; color:var(--text-faint); margin-top:6px; font-family:var(--font-mono);}
+.bar-row .top .pct-tag{font-family:var(--font-mono);}
+.bar-row .top .pct-tag.good{color:var(--good);}
+.bar-row .top .pct-tag.amber{color:var(--amber);}
+.bar-row .top .pct-tag.bad{color:var(--bad);}
+.bar-row .top .pct-tag.neutral{color:var(--text-faint);}
 
 .review-list{display:grid; gap:10px; margin-top:8px;}
 .review-item{
@@ -296,14 +308,16 @@ var CATEGORY_ICON = {};
 
 var LS_KEY = 'ctquiz_progress_v1';
 function loadStore(){
-  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {missed:{}, attempts:{}}; }
-  catch(e){ return {missed:{}, attempts:{}}; }
+  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {missed:{}, attempts:{}, correct:{}}; }
+  catch(e){ return {missed:{}, attempts:{}, correct:{}}; }
 }
 function saveStore(s){ try{ localStorage.setItem(LS_KEY, JSON.stringify(s)); }catch(e){} }
 var store = loadStore();
+if(!store.correct) store.correct = {};
 
 var state = {
   screen: 'home',
+  homeTab: 'setup',
   selectedCats: CATEGORY_ORDER.slice(),
   count: 20,
   shuffle: true,
@@ -355,29 +369,22 @@ function ringSvg(size, stroke, pct, color){
       'stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'" style="transition:stroke-dashoffset .4s ease"/>'+
     '</svg>';
 }
-function sinogramSvg(){
-  var lines = '';
-  for(var i=0;i<48;i++){
-    var ang = (i/48)*Math.PI;
-    var r = 128;
-    var x1 = 140 + r*Math.cos(ang), y1 = 140 + r*Math.sin(ang);
-    var x2 = 140 - r*Math.cos(ang), y2 = 140 - r*Math.sin(ang);
-    var op = 0.05 + 0.22*Math.abs(Math.sin(ang*3));
-    var col = i%7===0 ? 'var(--amber)' : 'var(--accent)';
-    lines += '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="1" opacity="'+op.toFixed(2)+'"/>';
-  }
-  var rings = '';
-  [40,68,96,124].forEach(function(r,i){
-    rings += '<circle cx="140" cy="140" r="'+r+'" fill="none" stroke="var(--line-soft)" stroke-width="1"/>';
-  });
-  return '<svg class="sinogram" viewBox="0 0 280 280" role="img" aria-label="CT走査を表す装飾図形">'+rings+lines+
-    '<circle cx="140" cy="140" r="4" fill="var(--accent)"/></svg>';
-}
-
 function catCount(cat){ return ALL_QUESTIONS.filter(function(q){return q.category===cat;}).length; }
 function weakCount(){
   var ids = Object.keys(store.missed).filter(function(id){ return store.missed[id] > 0; });
   return ids.length;
+}
+function catProficiency(cat){
+  var ids = ALL_QUESTIONS.filter(function(q){return q.category===cat;}).map(function(q){return q.id;});
+  var attemptedQ = 0, totalAttempts = 0, totalCorrect = 0;
+  ids.forEach(function(id){
+    var a = store.attempts[id]||0, c = store.correct[id]||0;
+    if(a>0) attemptedQ++;
+    totalAttempts += a; totalCorrect += c;
+  });
+  var acc = totalAttempts ? Math.round(totalCorrect/totalAttempts*100) : null;
+  var level = acc===null ? 'neutral' : acc>=80 ? 'good' : acc>=50 ? 'amber' : 'bad';
+  return {total: ids.length, attemptedQ: attemptedQ, acc: acc, level: level};
 }
 
 function render(){
@@ -416,18 +423,26 @@ function renderHome(){
   var wrap = el('div',{});
 
   var hero = el('section',{class:'hero'},[
-    el('div',{},[
-      el('div',{class:'eyebrow'},['CT認定技師試験対策']),
-      el('p',{class:'lead'},['4分野・250問を1問ずつ解いて、解説とともに理解を積み上げていきます。']),
-      el('div',{class:'hero-stats'},[
-        statBlock(String(ALL_QUESTIONS.length), '収録問題数'),
-        statBlock(String(CATEGORY_ORDER.length), '出題分野'),
-        statBlock(String(weakCount()), '要復習問題')
-      ])
-    ]),
-    el('div',{class:'sinogram-wrap'},[ (function(){ var d=document.createElement('div'); d.innerHTML=sinogramSvg(); return d.firstChild; })() ])
+    el('div',{class:'eyebrow'},['CT認定技師試験対策']),
+    el('p',{class:'lead'},['4分野・250問を1問ずつ解いて、解説とともに理解を積み上げていきます。']),
+    el('div',{class:'hero-stats'},[
+      statBlock(String(ALL_QUESTIONS.length), '収録問題数'),
+      statBlock(String(CATEGORY_ORDER.length), '出題分野'),
+      statBlock(String(weakCount()), '要復習問題')
+    ])
   ]);
   wrap.appendChild(hero);
+
+  var tabNav = el('div',{class:'tab-nav'},[
+    el('button',{type:'button', class: state.homeTab==='setup' ? 'active':'', onclick:function(){ state.homeTab='setup'; render(); }},['出題']),
+    el('button',{type:'button', class: state.homeTab==='stats' ? 'active':'', onclick:function(){ state.homeTab='stats'; render(); }},['習熟度'])
+  ]);
+  wrap.appendChild(tabNav);
+
+  if(state.homeTab==='stats'){
+    wrap.appendChild(renderProficiency());
+    return wrap;
+  }
 
   wrap.appendChild(el('div',{class:'section-label'},['分野を選択']));
   var grid = el('div',{class:'cat-grid'});
@@ -491,6 +506,31 @@ function renderHome(){
     ])
   ]));
 
+  return wrap;
+}
+function renderProficiency(){
+  var wrap = el('div',{});
+  wrap.appendChild(el('div',{class:'section-label'},['分野別の習熟度']));
+  var list = el('div',{class:'bar-list'});
+  var anyAttempt = false;
+  CATEGORY_ORDER.forEach(function(cat){
+    var p = catProficiency(cat);
+    if(p.acc!==null) anyAttempt = true;
+    var pctLabel = p.acc===null ? '未着手' : p.acc+'%';
+    var row = el('div',{class:'bar-row'},[
+      el('div',{class:'top'},[
+        el('span',{class:'name'},[cat]),
+        el('span',{class:'pct-tag '+p.level},[pctLabel])
+      ]),
+      el('div',{class:'bar-track'},[ el('div',{class:'bar-fill '+p.level, style:'width:'+(p.acc||0)+'%'}) ]),
+      el('div',{class:'sub'},[p.attemptedQ+' / '+p.total+' 問に解答済み'])
+    ]);
+    list.appendChild(row);
+  });
+  wrap.appendChild(list);
+  if(!anyAttempt){
+    wrap.appendChild(el('div',{class:'empty-note'},['まだ解答記録がありません。「出題」タブから問題を解くと、ここに分野別の正答率が表示されます。']));
+  }
   return wrap;
 }
 function statBlock(num,label){
@@ -608,6 +648,7 @@ function selectAnswer(L){
   if(correct) state.score++;
   store.missed[q.id] = correct ? 0 : ((store.missed[q.id]||0) + 1);
   store.attempts[q.id] = (store.attempts[q.id]||0) + 1;
+  store.correct[q.id] = (store.correct[q.id]||0) + (correct ? 1 : 0);
   saveStore(store);
   state.history.push({q:q, picked:L, correct:correct});
   render();
@@ -646,13 +687,9 @@ function renderResult(){
     el('div',{class:'of'},[correct+' / '+total+' 問正解'])
   ]));
 
-  var msg = pct>=0.8 ? '高精度な画像が再構成されました。この分野は安定しています。' :
-            pct>=0.5 ? 'ノイズはありますが、輪郭は見えています。誤答を復習しましょう。' :
-            '再構成にはまだノイズが多いようです。解説を読み込んで再挑戦しましょう。';
-
   wrap.appendChild(el('section',{class:'result-hero'},[
     ring,
-    el('div',{class:'result-copy'},[ el('h2',{},['画像再構成 完了']), el('p',{},[msg]) ])
+    el('div',{class:'result-copy'},[ el('h2',{},['結果']) ])
   ]));
 
   wrap.appendChild(el('div',{class:'section-label'},['分野別スコア']));
